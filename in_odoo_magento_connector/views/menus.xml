@@ -1,0 +1,26 @@
+<odoo>
+    <!-- Load after the views so navigation is defined together, with stable IDs. -->
+    <menuitem id="menu_magento" name="Magento" sequence="35" groups="group_magento_user"
+              web_icon="in_odoo_magento_connector,static/description/icon.png"/>
+
+    <menuitem id="menu_operations" name="Operations" parent="menu_magento"
+              action="action_operations" sequence="10" groups="group_magento_manager"/>
+
+    <menuitem id="menu_sales" name="Sales" parent="menu_magento" sequence="20"/>
+    <menuitem id="menu_orders" name="Order Inbox" parent="menu_sales" action="action_orders" sequence="10"/>
+    <menuitem id="menu_shipments" name="Shipments" parent="menu_sales" action="action_shipments" sequence="20"/>
+    <menuitem id="menu_accounting" name="Accounting" parent="menu_sales" action="action_accounting" sequence="30"/>
+    <menuitem id="menu_partners" name="Customer Mappings" parent="menu_sales" action="action_partners" sequence="40"/>
+
+    <menuitem id="menu_catalog" name="Catalog" parent="menu_magento" sequence="30"/>
+    <menuitem id="menu_products" name="Product Mappings" parent="menu_catalog" action="action_products" sequence="10"/>
+    <menuitem id="menu_templates" name="Configurable Products" parent="menu_catalog" action="action_templates" sequence="20"/>
+    <menuitem id="menu_categories" name="Category Mappings" parent="menu_catalog" action="action_categories" sequence="30"/>
+
+    <menuitem id="menu_sync_logs" name="Sync Logs" parent="menu_magento" action="action_sync_logs" sequence="40"/>
+
+    <menuitem id="menu_configuration" name="Configuration" parent="menu_magento" sequence="90"/>
+    <menuitem id="menu_guided_setup" name="Guided Setup" parent="menu_configuration"
+              action="action_guided_setup" sequence="10" groups="group_magento_manager"/>
+    <menuitem id="menu_connections" name="Connections" parent="menu_configuration" action="action_instances" sequence="20"/>
+</odoo>

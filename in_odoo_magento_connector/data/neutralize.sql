@@ -1,0 +1,17 @@
+UPDATE in_magento_instance
+   SET enabled = false,
+       auto_import_orders = false,
+       auto_export_products = false,
+       auto_export_categories = false,
+       auto_export_attributes = false,
+       auto_import_customers = false,
+       auto_export_customers = false,
+       auto_export_inventory = false,
+       auto_export_shipments = false,
+       auto_export_tracking = false,
+       auto_import_financials = false,
+       auto_export_cancellations = false,
+       auto_import_cancellations = false,
+       access_token = NULL,
+       token_secret = NULL,
+       consumer_secret = NULL;

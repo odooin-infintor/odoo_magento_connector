@@ -1,0 +1,83 @@
+<odoo>
+    <record id="view_instance_variants_inventory" model="ir.ui.view">
+        <field name="name">in.magento.instance.variants.inventory</field>
+        <field name="model">in.magento.instance</field>
+        <field name="inherit_id" ref="view_instance_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook[@name='catalog_tabs']" position="inside">
+                <page string="Configurable Products" name="catalog_templates">
+                    <field name="template_ids" context="{'default_instance_id': id}">
+                        <list>
+                            <field name="template_id"/>
+                            <field name="sku"/>
+                            <field name="external_id"/>
+                            <field name="last_sync"/>
+                            <field name="linked_at"/>
+                        </list>
+                    </field>
+                </page>
+                <page string="Variant Attributes" name="catalog_attributes">
+                    <div class="alert alert-info" role="status">Use Publish to Magento on an Odoo attribute to create its dropdown and values. For existing Magento attributes, map their codes and option IDs here, assign them to the configured attribute set, then verify each mapping.</div>
+                    <field name="attribute_mapping_ids" context="{'default_instance_id': id}">
+                        <list>
+                            <field name="attribute_id"/>
+                            <field name="attribute_code"/>
+                            <field name="external_id"/>
+                            <field name="verified_at"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+            <xpath expr="//notebook[@name='connection_tabs']" position="inside">
+                <page string="Inventory" name="inventory">
+                    <div class="mb-3">
+                        <button name="action_export_inventory" string="Export Inventory" type="object" groups="in_odoo_magento_connector.group_magento_manager" confirm="Replace mapped Magento source quantities with physical Odoo on-hand stock for inventory-enabled product mappings?"/>
+                    </div>
+                    <div class="alert alert-info" role="status">Odoo exports physical company-owned on-hand stock from each warehouse's stock location and its internal children. Reserved quantities are not subtracted; Magento manages reservations and salable quantity. Only inventory-enabled, tracked product mappings are exported. Quantities use the Odoo product's inventory unit.</div>
+                    <group>
+                        <field name="auto_export_inventory"/>
+                        <field name="inventory_interval"/>
+                        <field name="last_inventory_schedule"/>
+                    </group>
+                    <field name="inventory_source_ids" context="{'default_instance_id': id}">
+                        <list editable="bottom">
+                            <field name="company_id" column_invisible="True"/>
+                            <field name="warehouse_id"/>
+                            <field name="location_id"/>
+                            <field name="source_code"/>
+                            <field name="active"/>
+                            <button name="action_test_source" string="Test Source" type="object" groups="in_odoo_magento_connector.group_magento_manager"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_product_variant_inventory" model="ir.ui.view">
+        <field name="name">in.magento.product.variant.inventory</field><field name="model">in.magento.product.binding</field>
+        <field name="inherit_id" ref="view_product_form"/><field name="arch" type="xml">
+            <xpath expr="//header" position="inside"><button name="action_export_inventory" string="Export Inventory" type="object" groups="in_odoo_magento_connector.group_magento_manager" invisible="not external_id or not sync_inventory"/></xpath>
+            <xpath expr="//field[@name='sync_image']" position="after"><field name="template_binding_id" readonly="external_id"/><field name="sync_inventory"/><field name="last_inventory_sync"/></xpath>
+        </field>
+    </record>
+    <record id="view_attribute_mapping_form" model="ir.ui.view">
+        <field name="name">in.magento.attribute.mapping.form</field><field name="model">in.magento.attribute.mapping</field>
+        <field name="arch" type="xml"><form><header><button name="action_verify" type="object" string="Verify in Magento" class="btn-primary" groups="in_odoo_magento_connector.group_magento_manager"/></header><sheet>
+            <group><field name="instance_id"/><field name="attribute_id"/><field name="attribute_code"/><field name="external_id"/><field name="verified_at"/></group>
+            <field name="value_ids"><list editable="bottom"><field name="attribute_id" column_invisible="True"/><field name="value_id" domain="[('attribute_id', '=', attribute_id)]"/><field name="external_id"/></list></field>
+        </sheet></form></field>
+    </record>
+    <record id="view_template_binding_list" model="ir.ui.view"><field name="name">in.magento.template.binding.list</field><field name="model">in.magento.template.binding</field><field name="arch" type="xml"><list><field name="instance_id"/><field name="template_id"/><field name="sku"/><field name="external_id"/><field name="linked_at"/></list></field></record>
+    <record id="view_template_binding_form" model="ir.ui.view">
+        <field name="name">in.magento.template.binding.form</field><field name="model">in.magento.template.binding</field>
+        <field name="arch" type="xml"><form><header>
+            <button name="action_link" type="object" string="Link Existing" invisible="external_id" groups="in_odoo_magento_connector.group_magento_manager"/>
+            <button name="action_export" type="object" string="Export Parent and Variants" class="btn-primary" groups="in_odoo_magento_connector.group_magento_manager"/>
+        </header><sheet><group><group><field name="instance_id" readonly="external_id"/><field name="company_id" invisible="1"/>
+            <field name="template_id" readonly="external_id"/><field name="sku" readonly="external_id"/><field name="external_id"/></group>
+            <group><field name="category_ids" widget="many2many_tags" domain="[('instance_id', '=', instance_id)]"/><field name="tax_class_id"/><field name="sync_image"/><field name="last_sync"/><field name="linked_at"/></group></group>
+            <field name="child_ids" readonly="1"><list><field name="product_id"/><field name="sku"/><field name="external_id"/><field name="sync_inventory"/><field name="last_sync"/></list></field>
+        </sheet></form></field>
+    </record>
+    <record id="action_templates" model="ir.actions.act_window"><field name="name">Configurable Products</field><field name="res_model">in.magento.template.binding</field><field name="view_mode">list,form</field></record>
+</odoo>

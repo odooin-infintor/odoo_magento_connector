@@ -1,0 +1,59 @@
+<odoo>
+    <record id="view_instance_accounting" model="ir.ui.view">
+        <field name="name">in.magento.instance.accounting</field>
+        <field name="model">in.magento.instance</field>
+        <field name="inherit_id" ref="view_instance_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_accounting" type="object" class="oe_stat_button" icon="fa-file-text-o">
+                    <field name="accounting_count" widget="statinfo" string="Accounting"/>
+                </button>
+            </xpath>
+            <xpath expr="//notebook[@name='connection_tabs']" position="inside">
+                <page string="Accounting" name="accounting">
+                    <div class="mb-3">
+                        <button name="action_sync_financials" type="object" string="Sync Accounting / Payment Status" groups="in_odoo_magento_connector.group_magento_manager" invisible="not enabled"/>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="import_invoices"/>
+                            <field name="import_refunds"/>
+                            <field name="import_payment_status"/>
+                            <field name="financial_journal_id"/>
+                        </group>
+                        <group>
+                            <field name="auto_import_financials"/>
+                            <field name="financial_interval"/>
+                            <field name="financial_recent_days"/>
+                            <field name="financial_history_hours"/>
+                            <field name="financial_poll_limit"/>
+                            <field name="last_financial_schedule"/>
+                        </group>
+                    </group>
+                    <div class="text-muted">Active and recent orders use the financial interval. Older completed, closed and canceled orders are checked less often for late refunds. Each scheduled pass is bounded and includes historical checks. The manual synchronization button checks all imported orders.</div>
+                    <div class="alert alert-info" role="status">Magento invoices and completed credit memos create draft Odoo accounting documents for review. Payment status is informational. The connector does not capture or refund money, register payments, or reconcile accounting entries. Synchronization uses scheduled polling; no Magento extension is required.</div>
+                    <field name="accounting_ids" readonly="1">
+                        <list>
+                            <field name="name"/>
+                            <field name="kind"/>
+                            <field name="order_binding_id"/>
+                            <field name="move_id"/>
+                            <field name="imported_at"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_instance_tracking" model="ir.ui.view"><field name="name">in.magento.instance.tracking</field><field name="model">in.magento.instance</field><field name="inherit_id" ref="view_instance_fulfillment"/><field name="arch" type="xml"><xpath expr="//field[@name='auto_export_shipments']" position="after"><field name="auto_export_tracking"/><field name="last_tracking_schedule"/></xpath></field></record>
+    <record id="view_order_accounting" model="ir.ui.view"><field name="name">in.magento.order.accounting</field><field name="model">in.magento.order.binding</field><field name="inherit_id" ref="view_order_form"/><field name="arch" type="xml">
+        <xpath expr="//header" position="inside"><button name="action_sync_financials" type="object" string="Sync Accounting / Payment Status" groups="in_odoo_magento_connector.group_magento_manager" invisible="not sale_order_id"/></xpath>
+        <xpath expr="//notebook" position="inside"><page string="Accounting / Payment Status"><group><field name="financial_checked_at"/><field name="payment_checked_at"/><field name="payment_currency_id" invisible="1"/><field name="magento_paid"/><field name="magento_refunded"/><field name="magento_due"/></group><div class="text-muted">Amounts reported by Magento. Odoo payment registration and reconciliation remain separate.</div><field name="accounting_ids" readonly="1"><list><field name="name"/><field name="kind"/><field name="move_id"/><field name="imported_at"/></list></field></page></xpath>
+    </field></record>
+    <record id="view_accounting_list" model="ir.ui.view"><field name="name">in.magento.accounting.list</field><field name="model">in.magento.accounting</field><field name="arch" type="xml"><list create="0" edit="0" delete="0"><field name="name"/><field name="instance_id"/><field name="kind"/><field name="order_binding_id"/><field name="external_id"/><field name="move_id"/><field name="imported_at"/></list></field></record>
+    <record id="view_accounting_form" model="ir.ui.view"><field name="name">in.magento.accounting.form</field><field name="model">in.magento.accounting</field><field name="arch" type="xml"><form create="0" edit="0" delete="0"><header><button name="action_import" type="object" string="Queue Import / Check" groups="in_odoo_magento_connector.group_magento_manager"/><button name="action_prepare_return" type="object" string="Prepare / View Physical Return" invisible="kind != 'creditmemo' or not move_id" groups="in_odoo_magento_connector.group_magento_manager"/></header><sheet><group><field name="name"/><field name="instance_id"/><field name="kind"/><field name="order_binding_id"/><field name="external_id"/><field name="move_id"/><field name="imported_at"/></group><div class="alert alert-info" role="status">Physical returns are optional and separate from refunds. Preparing a return creates transfers for warehouse review; stock changes only after the warehouse validates receipt. Existing returns and undelivered quantities require review.</div><field name="return_picking_ids"><list><field name="name"/><field name="state"/><field name="location_id"/><field name="location_dest_id"/></list></field></sheet></form></field></record>
+    <record id="action_accounting" model="ir.actions.act_window"><field name="name">Magento Accounting</field><field name="res_model">in.magento.accounting</field><field name="view_mode">list,form</field></record>
+    <record id="view_shipment_tracking" model="ir.ui.view"><field name="name">in.magento.shipment.tracking</field><field name="model">in.magento.shipment</field><field name="inherit_id" ref="view_shipment_form"/><field name="arch" type="xml"><xpath expr="//header" position="inside"><button name="action_sync_tracking" type="object" string="Sync Tracking" invisible="not external_id" groups="in_odoo_magento_connector.group_magento_manager"/></xpath><xpath expr="//field[@name='exported_at']" position="after"><field name="tracking_external_id"/><field name="tracking_synced_at"/></xpath></field></record>
+    <record id="view_picking_tracking" model="ir.ui.view"><field name="name">stock.picking.magento.tracking</field><field name="model">stock.picking</field><field name="inherit_id" ref="view_picking_magento_shipment"/><field name="arch" type="xml"><xpath expr="//header" position="inside"><button name="action_sync_magento_tracking" type="object" string="Sync Tracking" groups="in_odoo_magento_connector.group_magento_manager" invisible="not in_magento_order_binding_id or state != 'done' or picking_type_code != 'outgoing'"/></xpath></field></record>
+    <record id="view_sync_log_accounting" model="ir.ui.view"><field name="name">in.magento.sync.log.accounting</field><field name="model">in.magento.sync.log</field><field name="inherit_id" ref="view_sync_log_form"/><field name="arch" type="xml"><xpath expr="//field[@name='order_binding_id']" position="after"><field name="accounting_id" invisible="not accounting_id"/></xpath></field></record>
+</odoo>

@@ -1,0 +1,131 @@
+<odoo>
+    <record id="view_product_publication_form" model="ir.ui.view">
+        <field name="name">in.magento.product.publication.form</field>
+        <field name="model">in.magento.product.publication</field>
+        <field name="arch" type="xml">
+            <form string="Magento Publication">
+                <field name="available_instance_ids" invisible="1"/>
+                <group>
+                    <group string="Destination and action">
+                        <field name="instance_id" domain="[('id', 'in', available_instance_ids)]" options="{'no_create': True}"/>
+                        <field name="operation" string="Action"/>
+                    </group>
+                    <group string="Selected products">
+                        <field name="template_ids" string="Odoo products" widget="many2many_tags" options="{'no_open': True}"/>
+                    </group>
+                </group>
+                <div class="alert alert-warning" role="status" invisible="operation != 'unpublish'">
+                    Unpublish disables the listings in the selected connection's Magento scope and stops their product, price, image and inventory updates.
+                </div>
+                <div class="alert alert-info" role="status" invisible="operation != 'republish'">
+                    Republish enables the listings in Magento and resumes updates using their existing synchronization settings.
+                </div>
+                <notebook>
+                    <page string="Affected listings" name="publication_listings">
+                        <p class="text-muted mt-3">
+                            All mapped variants and configurable parents of the selected products are included for this connection.
+                            Review their current status below.
+                        </p>
+                        <div invisible="not template_binding_ids">
+                            <separator string="Configurable parents"/>
+                            <field name="template_binding_ids" nolabel="1">
+                                <list create="false" edit="false" delete="false">
+                                    <field name="template_id" string="Product"/>
+                                    <field name="sku" string="Magento parent SKU"/>
+                                    <field name="publication_state" string="Current status"/>
+                                    <field name="external_id" string="Magento ID" optional="hide"/>
+                                </list>
+                            </field>
+                        </div>
+                        <separator string="Products and variants"/>
+                        <field name="product_binding_ids" nolabel="1">
+                            <list create="false" edit="false" delete="false">
+                                <field name="product_id" string="Product / variant"/>
+                                <field name="sku" string="Magento SKU"/>
+                                <field name="publication_state" string="Current status"/>
+                                <field name="external_id" string="Magento ID" optional="hide"/>
+                            </list>
+                        </field>
+                    </page>
+                    <page string="What changes" name="publication_effects">
+                        <div invisible="operation != 'unpublish'">
+                            <separator string="Unpublish and stop synchronization"/>
+                            <p>The Magento listings are disabled. Product details, prices, images and inventory stop exporting for these mappings.</p>
+                            <p>The Odoo products remain active. Mappings and existing orders are kept; order processing and shared category/attribute synchronization are separate workflows.</p>
+                        </div>
+                        <div invisible="operation != 'republish'">
+                            <separator string="Republish and resume synchronization"/>
+                            <p>All mapped variants must be active and available for sale in Odoo before republishing.</p>
+                            <p>This action explicitly enables the Magento listings, even if new listings normally start disabled. Existing image and inventory opt-ins are retained.</p>
+                        </div>
+                        <separator string="Confirm the result"/>
+                        <p>The change runs in the background and is complete only after Magento confirms it. Product synchronization is stopped while the status change is pending.</p>
+                        <p>Check Sync Logs or Background Jobs for the result. Failed requests remain pending for review or retry.</p>
+                    </page>
+                </notebook>
+                <footer>
+                    <button name="action_apply" type="object" string="Unpublish from Magento" class="btn-primary" invisible="operation != 'unpublish'"/>
+                    <button name="action_apply" type="object" string="Republish to Magento" class="btn-primary" invisible="operation != 'republish'"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="view_product_publication_buttons" model="ir.ui.view">
+        <field name="name">product.form.magento.publication.state</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="view_product_publish_magento"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_publish_to_magento']" position="attributes">
+                <attribute name="invisible">magento_publication_state != 'none'</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_publish_to_magento']" position="after">
+                <field name="magento_publication_state" invisible="1" groups="in_odoo_magento_connector.group_magento_manager"/>
+                <button name="action_unpublish_from_magento" type="object" class="oe_stat_button" icon="fa-cloud-download"
+                        groups="in_odoo_magento_connector.group_magento_manager" invisible="magento_publication_state != 'managed'">
+                    <div class="o_stat_info"><span class="o_stat_text">Unpublish from</span><span class="o_stat_text">Magento</span></div>
+                </button>
+                <button name="action_republish_to_magento" type="object" class="oe_stat_button" icon="fa-cloud-upload"
+                        groups="in_odoo_magento_connector.group_magento_manager" invisible="magento_publication_state != 'paused'">
+                    <div class="o_stat_info"><span class="o_stat_text">Republish to</span><span class="o_stat_text">Magento</span></div>
+                </button>
+                <button name="action_unpublish_from_magento" type="object" class="oe_stat_button" icon="fa-exchange"
+                        groups="in_odoo_magento_connector.group_magento_manager" invisible="magento_publication_state not in ('pending', 'mixed')">
+                    <div class="o_stat_info"><span class="o_stat_text">Magento</span><span class="o_stat_text">Publication Status</span></div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_product_publication_status" model="ir.ui.view">
+        <field name="name">in.magento.product.publication.status</field><field name="model">in.magento.product.binding</field>
+        <field name="inherit_id" ref="view_product_form"/>
+        <field name="arch" type="xml"><field name="last_sync" position="after"><field name="publication_state"/></field></field>
+    </record>
+    <record id="view_product_publication_list" model="ir.ui.view">
+        <field name="name">in.magento.product.publication.list</field><field name="model">in.magento.product.binding</field>
+        <field name="inherit_id" ref="view_product_list"/>
+        <field name="arch" type="xml"><field name="last_sync" position="after"><field name="publication_state" optional="show"/></field></field>
+    </record>
+    <record id="view_template_publication_status" model="ir.ui.view">
+        <field name="name">in.magento.template.publication.status</field><field name="model">in.magento.template.binding</field>
+        <field name="inherit_id" ref="view_template_binding_form"/>
+        <field name="arch" type="xml"><field name="linked_at" position="after"><field name="publication_state"/></field></field>
+    </record>
+    <record id="view_template_publication_list" model="ir.ui.view">
+        <field name="name">in.magento.template.publication.list</field><field name="model">in.magento.template.binding</field>
+        <field name="inherit_id" ref="view_template_binding_list"/>
+        <field name="arch" type="xml"><field name="linked_at" position="after"><field name="publication_state" optional="show"/></field></field>
+    </record>
+    <record id="action_unpublish_templates_magento" model="ir.actions.server">
+        <field name="name">Unpublish from Magento</field><field name="model_id" ref="product.model_product_template"/>
+        <field name="binding_model_id" ref="product.model_product_template"/><field name="binding_view_types">list,form</field>
+        <field name="group_ids" eval="[Command.link(ref('group_magento_manager'))]"/>
+        <field name="state">code</field><field name="code">action = records.action_unpublish_from_magento()</field>
+    </record>
+    <record id="action_unpublish_variants_magento" model="ir.actions.server">
+        <field name="name">Unpublish from Magento</field><field name="model_id" ref="product.model_product_product"/>
+        <field name="binding_model_id" ref="product.model_product_product"/><field name="binding_view_types">list,form</field>
+        <field name="group_ids" eval="[Command.link(ref('group_magento_manager'))]"/>
+        <field name="state">code</field><field name="code">action = records.action_unpublish_from_magento()</field>
+    </record>
+</odoo>

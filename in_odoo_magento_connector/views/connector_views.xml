@@ -1,0 +1,212 @@
+<odoo>
+    <record id="view_instance_list" model="ir.ui.view">
+        <field name="name">in.magento.instance.list</field>
+        <field name="model">in.magento.instance</field>
+        <field name="arch" type="xml">
+            <list><field name="name"/><field name="company_id"/><field name="base_url"/>
+                <field name="enabled"/><field name="connection_checked_at"/><field name="last_order_poll"/></list>
+        </field>
+    </record>
+    <record id="view_instance_form" model="ir.ui.view">
+        <field name="name">in.magento.instance.form</field>
+        <field name="model">in.magento.instance</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_test_connection" string="Test Connection" type="object" class="oe_highlight" groups="in_odoo_magento_connector.group_magento_manager"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_related_products" type="object" class="oe_stat_button" icon="fa-cubes">
+                            <field name="product_count" widget="statinfo" string="Products"/>
+                        </button>
+                        <button name="action_related_variants" type="object" class="oe_stat_button" icon="fa-th-large">
+                            <field name="variant_count" widget="statinfo" string="Variants"/>
+                        </button>
+                        <button name="action_related_attributes" type="object" class="oe_stat_button" icon="fa-tags">
+                            <field name="attribute_count" widget="statinfo" string="Attributes"/>
+                        </button>
+                        <button name="action_related_categories" type="object" class="oe_stat_button" icon="fa-sitemap">
+                            <field name="category_count" widget="statinfo" string="Categories"/>
+                        </button>
+                        <button name="action_related_sale_orders" type="object" class="oe_stat_button" icon="fa-shopping-cart" groups="sales_team.group_sale_salesman">
+                            <field name="sale_order_count" widget="statinfo" string="Sale Orders"/>
+                        </button>
+                        <button name="action_sync_logs" type="object" class="oe_stat_button" icon="fa-history">
+                            <field name="sync_log_count" widget="statinfo" string="Sync Logs"/>
+                        </button>
+                    </div>
+                    <div class="alert alert-warning" invisible="enabled" role="status">Synchronization is paused. Configure and test the connection before enabling it.</div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Magento store"/>
+                        </h1>
+                    </div>
+                    <group name="connection_overview">
+                        <group name="company">
+                            <field name="company_id"/>
+                        </group>
+                        <group name="status">
+                            <field name="enabled"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook name="connection_tabs">
+                        <page name="connection" string="Connection">
+                            <group>
+                                <group name="endpoint" string="Magento Store">
+                                    <field name="base_url" placeholder="https://shop.example.com"/>
+                                    <field name="store_code"/>
+                                    <field name="connection_checked_at"/>
+                                    <field name="sync_log_retention_days"/>
+                                </group>
+                                <group name="credentials" string="API Credentials" groups="in_odoo_magento_connector.group_magento_manager">
+                                    <field name="auth_type"/>
+                                    <field name="consumer_key" invisible="auth_type != 'oauth1'"/>
+                                    <field name="consumer_secret" password="True" invisible="auth_type != 'oauth1'"/>
+                                    <field name="access_token" password="True"/>
+                                    <field name="token_secret" password="True" invisible="auth_type != 'oauth1'"/>
+                                </group>
+                            </group>
+                            <div name="connection_tools" class="mt-3">
+                                <button name="action_jobs" string="Background Jobs" type="object" groups="in_odoo_magento_connector.group_magento_manager"/>
+                            </div>
+                        </page>
+                        <page name="catalog" string="Catalog">
+                            <notebook name="catalog_tabs">
+                                <page name="catalog_settings" string="Settings">
+                                    <group>
+                                        <group name="catalog_scope" string="Publishing">
+                                            <field name="pricelist_id"/>
+                                            <field name="attribute_set_id"/>
+                                            <field name="root_category_id"/>
+                                            <field name="publish_enabled"/>
+                                        </group>
+                                        <group name="catalog_automation" string="Automatic Synchronization">
+                                            <field name="auto_export_products"/>
+                                            <field name="batch_price_updates"/>
+                                        </group>
+                                    </group>
+                                    <div name="catalog_actions" class="d-flex gap-2 mb-3">
+                                        <button name="action_export_products" string="Export Products" type="object" invisible="not enabled" groups="in_odoo_magento_connector.group_magento_manager" confirm="Publish or update the mapped products in Magento? Existing unlinked SKUs will be left unchanged."/>
+                                        <button name="action_export_categories" string="Export Categories" type="object" invisible="not enabled" groups="in_odoo_magento_connector.group_magento_manager"/>
+                                    </div>
+                                </page>
+                                <page string="Products" name="catalog_products">
+                                    <field name="product_ids" context="{'default_instance_id': id}">
+                                        <list>
+                                            <field name="product_id"/>
+                                            <field name="sku"/>
+                                            <field name="external_id"/>
+                                            <field name="last_sync"/>
+                                        </list>
+                                    </field>
+                                </page>
+                                <page string="Categories" name="catalog_categories">
+                                    <field name="category_ids" context="{'default_instance_id': id}">
+                                        <list editable="bottom">
+                                            <field name="instance_id" column_invisible="True"/>
+                                            <field name="category_id"/>
+                                            <field name="parent_id"/>
+                                            <field name="external_id"/>
+                                            <field name="last_sync"/>
+                                            <button name="action_export" string="Export" type="object" groups="in_odoo_magento_connector.group_magento_manager"/>
+                                        </list>
+                                    </field>
+                                </page>
+                            </notebook>
+                        </page>
+                        <page name="sales" string="Sales">
+                            <notebook name="sales_tabs">
+                                <page name="order_settings" string="Order Import">
+                                    <group>
+                                        <group name="order_scope" string="Store and Order Defaults">
+                                            <field name="store_ids"/>
+                                            <field name="import_from"/>
+                                            <field name="warehouse_id"/>
+                                            <field name="shipping_product_id"/>
+                                        </group>
+                                        <group name="order_automation" string="Automatic Import">
+                                            <field name="auto_import_orders"/>
+                                            <field name="order_interval"/>
+                                            <field name="order_batch_size"/>
+                                            <field name="auto_confirm_orders"/>
+                                        </group>
+                                    </group>
+                                    <div name="order_actions" class="mb-3">
+                                        <button name="action_import_orders" string="Import Orders" type="object" invisible="not enabled" groups="in_odoo_magento_connector.group_magento_manager"/>
+                                    </div>
+                                    <group string="Import Progress">
+                                        <field name="order_cursor"/>
+                                        <field name="last_order_poll"/>
+                                    </group>
+                                </page>
+                                <page string="Order Inbox" name="sales_orders">
+                                    <field name="order_ids" readonly="1">
+                                        <list>
+                                            <field name="name"/>
+                                            <field name="external_id"/>
+                                            <field name="state"/>
+                                            <field name="sale_order_id"/>
+                                            <field name="imported_at"/>
+                                        </list>
+                                    </field>
+                                </page>
+                                <page string="Order Taxes" name="sales_taxes">
+                                    <field name="tax_mapping_ids" context="{'default_instance_id': id}">
+                                        <list editable="bottom">
+                                            <field name="company_id" column_invisible="True"/>
+                                            <field name="name"/>
+                                            <field name="rate"/>
+                                            <field name="tax_ids" widget="many2many_tags"/>
+                                        </list>
+                                    </field>
+                                </page>
+                            </notebook>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_product_list" model="ir.ui.view">
+        <field name="name">in.magento.product.binding.list</field><field name="model">in.magento.product.binding</field>
+        <field name="arch" type="xml"><list><field name="instance_id"/><field name="product_id"/><field name="sku"/>
+            <field name="external_id"/><field name="last_sync"/></list></field>
+    </record>
+    <record id="view_product_form" model="ir.ui.view">
+        <field name="name">in.magento.product.binding.form</field><field name="model">in.magento.product.binding</field>
+        <field name="arch" type="xml"><form><header>
+            <button name="action_link" string="Link Existing" type="object" invisible="external_id" groups="in_odoo_magento_connector.group_magento_manager"/>
+            <button name="action_export" string="Export to Magento" type="object" class="oe_highlight" groups="in_odoo_magento_connector.group_magento_manager"
+                    confirm="Publish or update this product in Magento?"/>
+        </header><sheet><group><group><field name="instance_id" readonly="external_id"/><field name="company_id" invisible="1"/>
+            <field name="product_id" readonly="external_id"/><field name="sku" readonly="external_id"/><field name="external_id"/></group>
+            <group><field name="category_ids" widget="many2many_tags"/><field name="tax_class_id"/><field name="sync_image"/><field name="last_sync"/></group>
+        </group></sheet></form></field>
+    </record>
+    <record id="view_order_list" model="ir.ui.view">
+        <field name="name">in.magento.order.binding.list</field><field name="model">in.magento.order.binding</field>
+        <field name="arch" type="xml"><list create="0"><field name="name"/><field name="instance_id"/>
+            <field name="external_id"/><field name="state"/><field name="remote_status"/><field name="sale_order_id"/><field name="imported_at"/></list></field>
+    </record>
+    <record id="view_order_form" model="ir.ui.view">
+        <field name="name">in.magento.order.binding.form</field><field name="model">in.magento.order.binding</field>
+        <field name="arch" type="xml"><form create="0"><header>
+            <button name="action_retry" string="Queue Import" type="object" invisible="sale_order_id" groups="in_odoo_magento_connector.group_magento_manager"/>
+            <field name="state" widget="statusbar"/>
+        </header><sheet><group><field name="name"/><field name="instance_id"/><field name="external_id"/>
+            <field name="remote_status"/><field name="sale_order_id"/><field name="imported_at"/></group>
+            <notebook><page string="Magento Data" groups="in_odoo_magento_connector.group_magento_manager"><field name="payload" widget="json"/></page></notebook>
+        </sheet></form></field>
+    </record>
+    <record id="view_partner_list" model="ir.ui.view">
+        <field name="name">in.magento.partner.binding.list</field><field name="model">in.magento.partner.binding</field>
+        <field name="arch" type="xml"><list editable="bottom"><field name="instance_id"/><field name="company_id" column_invisible="True"/>
+            <field name="external_id"/><field name="partner_id"/></list></field>
+    </record>
+    <record id="action_instances" model="ir.actions.act_window"><field name="name">Magento Connections</field><field name="res_model">in.magento.instance</field><field name="view_mode">list,form</field></record>
+    <record id="action_products" model="ir.actions.act_window"><field name="name">Magento Products</field><field name="res_model">in.magento.product.binding</field><field name="view_mode">list,form</field></record>
+    <record id="action_orders" model="ir.actions.act_window"><field name="name">Magento Order Inbox</field><field name="res_model">in.magento.order.binding</field><field name="view_mode">list,form</field></record>
+    <record id="action_partners" model="ir.actions.act_window"><field name="name">Magento Customer Mappings</field><field name="res_model">in.magento.partner.binding</field><field name="view_mode">list,form</field></record>
+</odoo>

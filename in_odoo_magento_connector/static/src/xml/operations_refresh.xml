@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="in_odoo_magento_connector.OperationsRefreshStatus">
+        <div class="o_magento_refresh_status px-3 py-2 small border-bottom"
+             t-att-class="operationsRefresh.failed ? 'text-warning' : 'text-muted'">
+            <span t-if="operationsRefresh.failed" role="status">Refresh failed. Showing previously loaded data; retrying automatically.</span>
+            <span t-else="">Auto-refresh every 10 seconds</span>
+            <span t-if="operationsRefresh.updatedAt"> · Last loaded: <t t-esc="operationsRefresh.updatedAt"/></span>
+        </div>
+    </t>
+    <t t-name="in_odoo_magento_connector.OperationsKanbanView" t-inherit="web.KanbanView" t-inherit-mode="primary">
+        <xpath expr="//Layout/t[@t-component='props.Renderer']" position="before">
+            <t t-call="in_odoo_magento_connector.OperationsRefreshStatus"/>
+        </xpath>
+    </t>
+    <t t-name="in_odoo_magento_connector.OperationsFormView" t-inherit="web.FormView" t-inherit-mode="primary">
+        <xpath expr="//Layout/t[@t-component='props.Renderer']" position="before">
+            <t t-call="in_odoo_magento_connector.OperationsRefreshStatus"/>
+        </xpath>
+    </t>
+</templates>

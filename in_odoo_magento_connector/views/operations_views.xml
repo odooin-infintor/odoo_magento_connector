@@ -1,0 +1,162 @@
+<odoo>
+    <record id="view_operations_kanban" model="ir.ui.view">
+        <field name="name">in.magento.operations.kanban</field><field name="model">in.magento.instance</field>
+        <field name="arch" type="xml">
+            <kanban create="false" edit="false" records_draggable="false" js_class="magento_operations_kanban">
+                <field name="name"/><field name="company_id"/><field name="enabled"/>
+                <field name="operations_status"/><field name="failed_job_count"/><field name="waiting_job_count"/>
+                <field name="running_job_count"/><field name="pending_order_count"/><field name="last_success_at"/>
+                <field name="setup_completed_at"/>
+                <field name="successful_syncs_today"/>
+                <templates><t t-name="card">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <strong class="fs-5"><field name="name"/></strong>
+                        <field name="operations_status" widget="badge" decoration-danger="operations_status == 'attention'" decoration-warning="operations_status == 'waiting'" decoration-muted="operations_status == 'paused'"/>
+                    </div>
+                    <div class="text-muted mb-3"><field name="company_id"/></div>
+                    <div class="row text-center mb-3">
+                        <div class="col-4"><button type="object" name="action_failed_jobs" class="btn btn-link text-danger p-0"><span class="fs-3"><field name="failed_job_count"/></span><br/>Failed jobs</button></div>
+                        <div class="col-4"><button type="object" name="action_waiting_jobs" class="btn btn-link p-0"><span class="fs-3"><field name="waiting_job_count"/></span><br/>Waiting jobs</button></div>
+                        <div class="col-4"><button type="object" name="action_pending_orders" class="btn btn-link p-0"><span class="fs-3"><field name="pending_order_count"/></span><br/>Pending orders</button></div>
+                    </div>
+                    <button type="object" name="action_successful_syncs_today" class="btn btn-link text-success p-0 mb-2">
+                        <strong><field name="successful_syncs_today"/></strong> Successful syncs today
+                    </button>
+                    <div class="border-top pt-2"><span class="text-muted">Running jobs: </span><field name="running_job_count"/></div>
+                    <div><span class="text-muted">Last successful sync: </span><field name="last_success_at"/><span t-if="!record.last_success_at.raw_value">No success recorded</span></div>
+                    <div class="mt-3 d-flex gap-2"><button type="object" name="action_operations" class="btn btn-primary">Open operations</button><button type="object" name="action_open_setup" class="btn btn-secondary"><t t-if="record.setup_completed_at.raw_value">Review Setup</t><t t-else="">Guided Setup</t></button></div>
+                    <div class="mt-3"><strong>Recent activity</strong><field name="recent_activity_html" widget="html"/>
+                        <button type="object" name="action_sync_logs" class="btn btn-link p-0">View all activity</button>
+                    </div>
+                </t></templates>
+            </kanban>
+        </field>
+    </record>
+    <record id="view_operations_form" model="ir.ui.view">
+        <field name="name">in.magento.operations.form</field>
+        <field name="model">in.magento.instance</field>
+        <field name="priority">90</field>
+        <field name="arch" type="xml">
+            <form create="false" edit="false" delete="false" js_class="magento_operations_form">
+                <header>
+                    <button name="action_operations" type="object" string="Refresh"/>
+                    <button name="action_open_settings" type="object" string="Connection Settings"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object" name="action_successful_syncs_today" class="oe_stat_button" icon="fa-check-circle">
+                            <field name="successful_syncs_today" widget="statinfo" string="Successful Syncs Today"/>
+                        </button>
+                        <button type="object" name="action_failed_jobs" class="oe_stat_button" icon="fa-exclamation-triangle">
+                            <field name="failed_job_count" widget="statinfo" string="Failed Jobs"/>
+                        </button>
+                        <button type="object" name="action_waiting_jobs" class="oe_stat_button" icon="fa-clock-o">
+                            <field name="waiting_job_count" widget="statinfo" string="Waiting Jobs"/>
+                        </button>
+                        <button type="object" name="action_pending_orders" class="oe_stat_button" icon="fa-shopping-cart">
+                            <field name="pending_order_count" widget="statinfo" string="Pending Orders"/>
+                        </button>
+                        <button type="object" name="action_sync_logs" class="oe_stat_button" icon="fa-history">
+                            <field name="sync_log_count" widget="statinfo" string="Sync Logs"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group name="operations_overview">
+                        <group name="state">
+                            <field name="enabled"/>
+                            <field name="operations_status"/>
+                        </group>
+                        <group name="success">
+                            <field name="last_success_at"/>
+                        </group>
+                    </group>
+                    <notebook name="operations_tabs">
+                        <page name="activity" string="Activity">
+                            <group>
+                                <group name="running">
+                                    <field name="running_job_count"/>
+                                </group>
+                                <group name="waiting">
+                                    <field name="oldest_waiting_at"/>
+                                </group>
+                            </group>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <strong>Recent activity — latest 10</strong>
+                                <button name="action_sync_logs" type="object" string="View All Activity" class="btn-link"/>
+                            </div>
+                            <field name="recent_activity_ids" nolabel="1" readonly="1">
+                                <list create="false" edit="false" delete="false" default_order="occurred_at desc, id desc" decoration-danger="status == 'failed'" decoration-warning="status == 'retry'">
+                                    <field name="occurred_at"/>
+                                    <field name="reference"/>
+                                    <field name="direction"/>
+                                    <field name="operation"/>
+                                    <field name="status" widget="badge"/>
+                                    <field name="activity_details"/>
+                                    <field name="summary" optional="hide"/>
+                                </list>
+                            </field>
+                            <details class="text-muted mt-3">
+                                <summary>How these counts work</summary>
+                                <p class="text-muted">Counts include retained jobs for this connection. Waiting includes scheduled retries and dependencies. A paused connection may still have queued work. Last successful sync comes from Sync Logs; empty polls and worker probes do not count as business synchronization.</p>
+                                <p class="text-muted">Successful syncs today counts successful log entries in your timezone. One product can have separate price and stock entries; a batch can create several entries.</p>
+                            </details>
+                        </page>
+                        <page name="diagnostics" string="Diagnostics">
+                            <div class="d-flex gap-2 mb-3">
+                                <button name="action_run_diagnostics" type="object" string="Run Diagnostics" class="oe_highlight"/>
+                                <button name="action_probe_worker" type="object" string="Test Worker"/>
+                            </div>
+                            <group>
+                                <group>
+                                    <field name="diagnostics_state"/>
+                                    <field name="diagnostics_requested_at"/>
+                                    <field name="diagnostics_checked_at"/>
+                                    <field name="diagnostics_current"/>
+                                </group>
+                                <group>
+                                    <field name="worker_probe_requested_at"/>
+                                    <field name="worker_probe_completed_at"/>
+                                </group>
+                            </group>
+                            <div class="alert alert-warning" role="status" groups="in_odoo_magento_connector.group_magento_manager" invisible="diagnostics_current">No current diagnostic report. Run Diagnostics after changing settings; results refresh automatically after the background job finishes.</div>
+                            <div class="alert alert-info" role="status">Diagnostics make read-only Magento requests in a background job. Test Worker queues a local acknowledgement only. If either remains waiting, inspect Background Jobs and the queue runner. These checks do not enable synchronization.</div>
+                            <field name="diagnostics_html" nolabel="1"/>
+                        </page>
+                        <page name="connection" string="Connection">
+                            <group>
+                                <group name="store" string="Store">
+                                    <field name="company_id"/>
+                                    <field name="base_url"/>
+                                </group>
+                                <group name="setup" string="Setup">
+                                    <field name="setup_completed_at"/>
+                                </group>
+                            </group>
+                            <div class="d-flex gap-2 mt-3">
+                                <button name="action_open_setup" type="object" string="Guided Setup" invisible="setup_completed_at"/>
+                                <button name="action_open_setup" type="object" string="Review Setup" invisible="not setup_completed_at"/>
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_operations_search" model="ir.ui.view"><field name="name">in.magento.operations.search</field><field name="model">in.magento.instance</field><field name="arch" type="xml"><search><field name="name"/><field name="company_id"/><filter name="enabled" string="Enabled" domain="[('enabled','=',True)]"/><filter name="paused" string="Paused" domain="[('enabled','=',False)]"/><filter name="archived" string="Archived" domain="[('active','=',False)]"/><group><filter name="company" string="Company" context="{'group_by':'company_id'}"/></group></search></field></record>
+    <record id="action_operations" model="ir.actions.act_window"><field name="name">Magento Operations</field><field name="res_model">in.magento.instance</field><field name="view_mode">kanban,form</field><field name="search_view_id" ref="view_operations_search"/><field name="help" type="html"><p class="o_view_nocontent_smiling_face">Connect your Magento store</p><p>Choose Guided Setup from the Magento menu to create your first paused connection.</p></field></record>
+    <record id="action_operations_kanban" model="ir.actions.act_window.view"><field name="sequence">1</field><field name="view_mode">kanban</field><field name="view_id" ref="view_operations_kanban"/><field name="act_window_id" ref="action_operations"/></record>
+    <record id="action_operations_form" model="ir.actions.act_window.view"><field name="sequence">2</field><field name="view_mode">form</field><field name="view_id" ref="view_operations_form"/><field name="act_window_id" ref="action_operations"/></record>
+    <record id="view_instance_operations" model="ir.ui.view">
+        <field name="name">in.magento.instance.operations</field><field name="model">in.magento.instance</field><field name="inherit_id" ref="view_instance_form"/>
+        <field name="arch" type="xml"><xpath expr="//header" position="inside">
+            <field name="setup_completed_at" invisible="1"/>
+            <button name="action_open_setup" type="object" string="Guided Setup" invisible="setup_completed_at" groups="in_odoo_magento_connector.group_magento_manager"/>
+            <button name="action_open_setup" type="object" string="Review Setup" invisible="not setup_completed_at" groups="in_odoo_magento_connector.group_magento_manager"/>
+            <button name="action_operations" type="object" string="Operations / Diagnostics" groups="in_odoo_magento_connector.group_magento_manager"/>
+        </xpath></field>
+    </record>
+</odoo>

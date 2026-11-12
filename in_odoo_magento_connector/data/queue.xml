@@ -1,0 +1,75 @@
+<odoo noupdate="1">
+    <record id="channel_magento" model="queue.job.channel">
+        <field name="name">magento</field>
+        <field name="parent_id" ref="queue_job.channel_root"/>
+    </record>
+    <record id="job_poll_orders" model="queue.job.function">
+        <field name="model_id" ref="model_in_magento_instance"/>
+        <field name="method">_job_poll_orders</field>
+        <field name="channel_id" ref="channel_magento"/>
+        <field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/>
+    </record>
+    <record id="job_poll_page" model="queue.job.function">
+        <field name="model_id" ref="model_in_magento_instance"/>
+        <field name="method">_job_poll_page</field>
+        <field name="channel_id" ref="channel_magento"/>
+        <field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/>
+    </record>
+    <record id="job_category" model="queue.job.function">
+        <field name="model_id" ref="model_in_magento_category_binding"/>
+        <field name="method">_job_export</field>
+        <field name="channel_id" ref="channel_magento"/>
+        <field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/>
+    </record>
+    <record id="job_product" model="queue.job.function">
+        <field name="model_id" ref="model_in_magento_product_binding"/>
+        <field name="method">_job_export</field>
+        <field name="channel_id" ref="channel_magento"/>
+        <field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/>
+    </record>
+    <record id="job_image" model="queue.job.function">
+        <field name="model_id" ref="model_in_magento_product_binding"/>
+        <field name="method">_job_export_image</field>
+        <field name="channel_id" ref="channel_magento"/>
+        <field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/>
+    </record>
+    <record id="job_product_delta" model="queue.job.function">
+        <field name="model_id" ref="model_in_magento_product_binding"/>
+        <field name="method">_job_export_if_changed</field>
+        <field name="channel_id" ref="channel_magento"/>
+        <field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/>
+    </record>
+    <record id="job_order" model="queue.job.function">
+        <field name="model_id" ref="model_in_magento_order_binding"/>
+        <field name="method">_job_import</field>
+        <field name="channel_id" ref="channel_magento"/>
+        <field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/>
+    </record>
+<record id="job_inventory" model="queue.job.function"><field name="model_id" ref="model_in_magento_product_binding"/><field name="method">_job_export_inventory</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+<record id="job_template" model="queue.job.function"><field name="model_id" ref="model_in_magento_template_binding"/><field name="method">_job_export</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+<record id="job_template_delta" model="queue.job.function"><field name="model_id" ref="model_in_magento_template_binding"/><field name="method">_job_export_if_changed</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+<record id="job_variant_links" model="queue.job.function"><field name="model_id" ref="model_in_magento_template_binding"/><field name="method">_job_link_variants</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+<record id="job_template_image" model="queue.job.function"><field name="model_id" ref="model_in_magento_template_binding"/><field name="method">_job_export_image</field><field name="channel_id" ref="channel_magento"/></record>
+<record id="job_attribute_export" model="queue.job.function"><field name="model_id" ref="model_in_magento_attribute_mapping"/><field name="method">_job_export</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+<record id="job_attribute_assign" model="queue.job.function"><field name="model_id" ref="model_in_magento_attribute_mapping"/><field name="method">_job_assign_attribute_set</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+<record id="job_fulfillment" model="queue.job.function"><field name="model_id" ref="model_in_magento_order_binding"/><field name="method">_job_sync_fulfillment</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+<record id="job_shipment" model="queue.job.function"><field name="model_id" ref="model_in_magento_shipment"/><field name="method">_job_export_shipment</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+<record id="job_category_delta" model="queue.job.function"><field name="model_id" ref="model_in_magento_category_binding"/><field name="method">_job_export_if_changed</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+<record id="job_attribute_delta" model="queue.job.function"><field name="model_id" ref="model_in_magento_attribute_mapping"/><field name="method">_job_export_if_changed</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+<record id="job_customers_poll" model="queue.job.function"><field name="model_id" ref="model_in_magento_instance"/><field name="method">_job_poll_customers</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+<record id="job_customers_page" model="queue.job.function"><field name="model_id" ref="model_in_magento_instance"/><field name="method">_job_customer_page</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+<record id="job_customer_import" model="queue.job.function"><field name="model_id" ref="model_in_magento_instance"/><field name="method">_job_import_customer</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+<record id="job_customer_export" model="queue.job.function"><field name="model_id" ref="model_in_magento_partner_binding"/><field name="method">_job_export_customer</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+<record id="job_customer_delta" model="queue.job.function"><field name="model_id" ref="model_in_magento_partner_binding"/><field name="method">_job_customer_if_changed</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+<record id="job_customer_address" model="queue.job.function"><field name="model_id" ref="model_in_magento_customer_address"/><field name="method">_job_export_address</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+<record id="job_tracking" model="queue.job.function"><field name="model_id" ref="model_in_magento_shipment"/><field name="method">_job_export_tracking</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+<record id="job_financials" model="queue.job.function"><field name="model_id" ref="model_in_magento_order_binding"/><field name="method">_job_sync_financials</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+<record id="job_financial_page" model="queue.job.function"><field name="model_id" ref="model_in_magento_order_binding"/><field name="method">_job_financial_page</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+<record id="job_accounting" model="queue.job.function"><field name="model_id" ref="model_in_magento_accounting"/><field name="method">_job_import_document</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+<record id="job_inventory_batch" model="queue.job.function"><field name="model_id" ref="model_in_magento_product_binding"/><field name="method">_job_export_inventory_batch</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+<record id="job_prices" model="queue.job.function"><field name="model_id" ref="model_in_magento_product_binding"/><field name="method">_job_export_prices</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+<record id="job_diagnostics" model="queue.job.function"><field name="model_id" ref="model_in_magento_instance"/><field name="method">_job_run_diagnostics</field><field name="channel_id" ref="channel_magento"/></record>
+<record id="job_worker_probe" model="queue.job.function"><field name="model_id" ref="model_in_magento_instance"/><field name="method">_job_probe_worker</field><field name="channel_id" ref="channel_magento"/></record>
+    <record id="job_product_publication" model="queue.job.function"><field name="model_id" ref="model_in_magento_product_binding"/><field name="method">_job_set_publication</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+    <record id="job_template_publication" model="queue.job.function"><field name="model_id" ref="model_in_magento_template_binding"/><field name="method">_job_set_publication</field><field name="channel_id" ref="channel_magento"/><field name="retry_pattern" eval="{1: 60, 3: 300, 5: 900}"/></record>
+</odoo>

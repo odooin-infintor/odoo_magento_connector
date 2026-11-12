@@ -1,0 +1,61 @@
+<odoo>
+    <record id="view_setup_form" model="ir.ui.view"><field name="name">in.magento.setup.form</field><field name="model">in.magento.setup</field>
+        <field name="arch" type="xml"><form string="Guided Magento Setup">
+            <header><field name="stage" widget="statusbar"/></header>
+            <field name="instance_id" invisible="1"/><field name="enabled" invisible="1"/>
+            <div class="alert alert-info" role="status">Settings are saved as you move through the steps. A new connection stays paused until you explicitly enable it on Review. Closing this wizard keeps saved settings.</div>
+            <div class="alert alert-warning" role="status" invisible="not enabled">This existing connection is enabled. Its current schedules remain active while you edit settings.</div>
+            <group invisible="stage != 'connection'">
+                <group string="Odoo and Magento"><field name="name"/><field name="company_id"/>
+                    <field name="base_url" placeholder="https://shop.example.com"/><field name="warehouse_id" domain="[('company_id','=',company_id)]"/>
+                    <field name="pricelist_id" domain="['|',('company_id','=',False),('company_id','=',company_id)]"/><field name="shipping_product_id"/>
+                </group><group string="API credentials"><field name="auth_type"/><field name="consumer_key" invisible="auth_type != 'oauth1'"/>
+                    <field name="consumer_secret" password="True" invisible="auth_type != 'oauth1'"/><field name="access_token" password="True"/>
+                    <field name="token_secret" password="True" invisible="auth_type != 'oauth1'"/>
+                    <p colspan="2">For an existing connection, leave credential fields blank to keep them. Changed values are saved to the connection and removed from this dialog.</p>
+                </group>
+            </group>
+            <div invisible="stage != 'scope'">
+                <button name="action_discover" type="object" string="Discover Magento Settings" class="btn-primary"/>
+                <field name="discovery_note" nolabel="1" readonly="1"/>
+                <group><group><field name="export_store_id" domain="[('wizard_id','=',id),('kind','in',['store','all'])]" options="{'no_create':True,'no_open':True}"/>
+                    <field name="import_store_ids" domain="[('wizard_id','=',id),('kind','=','store')]" widget="many2many_tags" options="{'no_create':True,'no_open':True}"/>
+                    <field name="customer_store_option_id" domain="[('wizard_id','=',id),('kind','=','store')]" options="{'no_create':True,'no_open':True}"/></group>
+                    <group><field name="attribute_option_id" domain="[('wizard_id','=',id),('kind','=','attribute')]" options="{'no_create':True,'no_open':True}"/>
+                    <field name="root_option_id" domain="[('wizard_id','=',id),('kind','=','root')]" options="{'no_create':True,'no_open':True}"/></group></group>
+                <p>All store views uses Magento's admin export scope. Order imports use only the selected store-view IDs. The customer website is taken from its selected store view. Existing mapped connections keep their original export scope and company.</p>
+            </div>
+            <div invisible="stage != 'mappings'">
+                <separator string="Inventory: physical on-hand per warehouse/source"/>
+                <group><field name="source_option_id" domain="[('wizard_id','=',id),('kind','=','source')]" options="{'no_create':True,'no_open':True}"/><button name="action_add_source" type="object" string="Map Selected Source to Setup Warehouse"/></group>
+                <field name="inventory_source_ids" context="{'default_instance_id': instance_id}"><list editable="bottom"><field name="instance_id" column_invisible="True"/><field name="company_id" column_invisible="True"/><field name="warehouse_id"/><field name="source_code"/><field name="active"/><button name="action_test_source" type="object" string="Test Source"/></list></field>
+                <p>Also enable inventory on each intended product mapping. Magento source/stock/website assignments must already exist. No stock is sent by setup.</p>
+                <separator string="Order taxes"/>
+                <field name="tax_mapping_ids" context="{'default_instance_id': instance_id}"><list editable="bottom"><field name="company_id" column_invisible="True"/><field name="name"/><field name="rate"/><field name="tax_ids" widget="many2many_tags"/></list></field>
+                <p>Map every Magento rate used by your orders, including zero. Confirm currency, tax-included/excluded behavior, discounts and shipping with a test order; setup does not infer tax rules.</p>
+            </div>
+            <div invisible="stage != 'automation'">
+                <group><group string="Orders"><field name="auto_import_orders"/><field name="import_from"/><field name="order_interval"/><field name="auto_confirm_orders"/></group>
+                    <group string="Catalog"><field name="auto_export_products"/><field name="auto_export_categories"/><field name="auto_export_attributes"/><field name="catalog_metadata_interval"/></group>
+                    <group string="Inventory"><field name="auto_export_inventory"/><field name="inventory_interval"/></group>
+                    <group string="Customers"><field name="auto_import_customers"/><field name="auto_export_customers"/><field name="customer_interval"/></group>
+                    <group string="Fulfillment"><field name="auto_export_shipments"/><field name="auto_export_tracking"/><field name="auto_export_cancellations"/><field name="auto_import_cancellations"/><field name="fulfillment_interval"/></group>
+                    <group string="Accounting"><field name="import_invoices"/><field name="import_refunds"/><field name="import_payment_status"/><field name="financial_journal_id" domain="[('type','=','sale'),('company_id','=',company_id)]"/><field name="auto_import_financials"/><field name="financial_interval"/></group></group>
+                <p>Automatic catalog export updates already-published mappings; it does not publish every new Odoo product. Customer registrations import from Magento, then Odoo owns updates. Accounting imports drafts only. Existing import cursors are not reset by setup.</p>
+            </div>
+            <div invisible="stage != 'review'">
+                <div class="d-flex gap-2 mb-3"><button name="action_probe" type="object" string="1. Test Worker"/><button name="action_check" type="object" string="2. Run Diagnostics" class="btn-primary"/><button name="action_refresh" type="object" string="Refresh Results"/></div>
+                <group><field name="worker_probe_completed_at"/><field name="diagnostics_checked_at"/><field name="diagnostics_current"/></group>
+                <p>Wait for the worker probe, then run diagnostics. Refresh after the diagnostic job finishes. Reports describe read access only; controlled write tests are still required.</p>
+                <field name="diagnostics_html" nolabel="1"/>
+                <group><field name="enable_after_setup" invisible="enabled"/><field name="accept_warnings" invisible="not enable_after_setup"/></group>
+                <p>Finish saves setup completion and opens Operations. It does not publish products or force an import. If you enable synchronization, your selected automatic flows start on their next due schedule.</p>
+            </div>
+            <footer><button name="action_back" type="object" string="Back" invisible="stage == 'connection'"/>
+                <button name="action_next" type="object" string="Save and Continue" class="btn-primary" invisible="stage == 'review'"/>
+                <button name="action_finish" type="object" string="Finish Setup" class="btn-primary" invisible="stage != 'review'"/>
+                <button string="Close" special="cancel"/></footer>
+        </form></field>
+    </record>
+    <record id="action_guided_setup" model="ir.actions.act_window"><field name="name">Guided Magento Setup</field><field name="res_model">in.magento.setup</field><field name="view_mode">form</field><field name="target">new</field></record>
+</odoo>

@@ -1,0 +1,48 @@
+<odoo>
+    <record id="view_attribute_publish_magento" model="ir.ui.view">
+        <field name="name">product.attribute.form.publish.magento</field>
+        <field name="model">product.attribute</field>
+        <field name="inherit_id" ref="product.product_attribute_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_publish_to_magento" type="object" class="oe_stat_button" icon="fa-cloud-upload"
+                        groups="in_odoo_magento_connector.group_magento_manager">
+                    <div class="o_stat_info"><span class="o_stat_text">Publish to</span><span class="o_stat_text">Magento</span></div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_publish_attributes_form" model="ir.ui.view">
+        <field name="name">in.magento.publish.attributes.form</field>
+        <field name="model">in.magento.publish.attributes</field>
+        <field name="arch" type="xml">
+            <form string="Publish Attribute to Magento">
+                <group><field name="attribute_id"/><field name="instance_id" options="{'no_create': True}"/>
+                    <field name="binding_id" invisible="1"/><field name="attribute_code" readonly="binding_id"/>
+                    <field name="attribute_set_id" string="Magento attribute set ID"/>
+                </group>
+                <div class="alert alert-info" role="status">
+                    Publish this attribute as a global dropdown, including the values below, and assign it to the connection's attribute set.
+                    Existing mappings keep their IDs. The attribute name is updated and new values are added; existing options and translations remain unchanged.
+                    To rename an existing value, update its admin label in Magento first.
+                    An existing unlinked Magento attribute or value requires explicit mapping first. Products are published separately.
+                </div>
+                <field name="value_ids" nolabel="1"><list create="0" edit="0" delete="0"><field name="name"/></list></field>
+                <footer><button name="action_publish" type="object" string="Publish to Magento" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/></footer>
+            </form>
+        </field>
+    </record>
+    <record id="view_attribute_mapping_publish" model="ir.ui.view">
+        <field name="name">in.magento.attribute.mapping.publish</field>
+        <field name="model">in.magento.attribute.mapping</field>
+        <field name="inherit_id" ref="view_attribute_mapping_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside"><button name="action_export" type="object" string="Publish to Magento" groups="in_odoo_magento_connector.group_magento_manager"/></xpath>
+            <xpath expr="//field[@name='verified_at']" position="after"><field name="last_sync"/></xpath>
+            <xpath expr="//field[@name='attribute_code']" position="attributes"><attribute name="readonly">external_id</attribute></xpath>
+            <xpath expr="//field[@name='attribute_id']" position="attributes"><attribute name="readonly">external_id</attribute></xpath>
+            <xpath expr="//field[@name='instance_id']" position="attributes"><attribute name="readonly">external_id</attribute></xpath>
+        </field>
+    </record>
+</odoo>

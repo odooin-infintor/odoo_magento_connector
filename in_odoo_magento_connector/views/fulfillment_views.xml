@@ -1,0 +1,50 @@
+<odoo>
+    <record id="view_instance_fulfillment" model="ir.ui.view">
+        <field name="name">in.magento.instance.fulfillment</field>
+        <field name="model">in.magento.instance</field>
+        <field name="inherit_id" ref="view_instance_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook[@name='sales_tabs']" position="inside">
+                <page string="Shipments &amp; Cancellations" name="sales_fulfillment">
+                    <div class="mb-3">
+                        <button name="action_sync_fulfillment" type="object" string="Sync Shipments / Cancellations" groups="in_odoo_magento_connector.group_magento_manager" confirm="Export completed deliveries and synchronize unprocessed order cancellations in both directions?"/>
+                    </div>
+                    <group>
+                        <field name="auto_export_shipments"/>
+                        <field name="auto_export_cancellations"/>
+                        <field name="auto_import_cancellations"/>
+                        <field name="fulfillment_interval"/>
+                        <field name="last_fulfillment_schedule"/>
+                    </group>
+                    <div class="alert alert-info" role="status">Completed Odoo customer deliveries create Magento shipments, including partial deliveries. Map each delivery warehouse to a Magento source. Pending shipments hold back inventory exports until confirmed. Whole-order cancellations synchronize only when neither system has deliveries or invoices. Returns, refunds and partial cancellations require review. Shipment emails are not sent.</div>
+                    <field name="shipment_ids" readonly="1">
+                        <list>
+                            <field name="picking_id"/>
+                            <field name="order_binding_id"/>
+                            <field name="external_id"/>
+                            <field name="source_code"/>
+                            <field name="exported_at"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_order_fulfillment" model="ir.ui.view">
+        <field name="name">in.magento.order.fulfillment</field><field name="model">in.magento.order.binding</field>
+        <field name="inherit_id" ref="view_order_form"/><field name="arch" type="xml">
+            <xpath expr="//header" position="inside"><button name="action_sync_fulfillment" type="object" string="Sync Shipments / Cancellation" groups="in_odoo_magento_connector.group_magento_manager" invisible="not sale_order_id" confirm="Export completed deliveries and synchronize cancellation for this order in both directions?"/></xpath>
+            <xpath expr="//field[@name='remote_status']" position="after"><field name="remote_state"/><field name="cancellation_synced_at"/></xpath>
+        </field>
+    </record>
+    <record id="view_shipment_list" model="ir.ui.view"><field name="name">in.magento.shipment.list</field><field name="model">in.magento.shipment</field><field name="arch" type="xml"><list create="0" edit="0" delete="0"><field name="instance_id"/><field name="order_binding_id"/><field name="picking_id"/><field name="external_id"/><field name="source_code"/><field name="exported_at"/></list></field></record>
+    <record id="view_shipment_form" model="ir.ui.view"><field name="name">in.magento.shipment.form</field><field name="model">in.magento.shipment</field><field name="arch" type="xml"><form create="0" edit="0" delete="0"><header><button name="action_export" type="object" string="Queue Shipment / Reconcile" groups="in_odoo_magento_connector.group_magento_manager" invisible="external_id"/></header><sheet><group><field name="instance_id"/><field name="order_binding_id"/><field name="picking_id"/><field name="external_id"/><field name="source_code"/><field name="request_key"/><field name="exported_at"/><field name="items" widget="json"/></group></sheet></form></field></record>
+    <record id="action_shipments" model="ir.actions.act_window"><field name="name">Magento Shipments</field><field name="res_model">in.magento.shipment</field><field name="view_mode">list,form</field></record>
+    <record id="view_picking_magento_shipment" model="ir.ui.view">
+        <field name="name">stock.picking.magento.shipment</field><field name="model">stock.picking</field><field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside"><field name="in_magento_order_binding_id" invisible="1" groups="in_odoo_magento_connector.group_magento_manager"/><button name="action_sync_magento_shipment" type="object" string="Sync Shipment to Magento" groups="in_odoo_magento_connector.group_magento_manager" invisible="not in_magento_order_binding_id or state != 'done' or picking_type_code != 'outgoing'"/></xpath>
+            <xpath expr="//notebook" position="inside"><page string="Magento" groups="in_odoo_magento_connector.group_magento_manager" invisible="not in_magento_order_binding_id"><group><field name="in_magento_tracking_number"/><field name="in_magento_tracking_title"/></group><div class="text-muted">Set tracking before shipment synchronization. If empty, the Odoo carrier tracking reference is used when available. Use Sync Tracking to send later changes, or enable automatic tracking synchronization on the connector. Clearing tracking removes only the connector-managed tracking row.</div><field name="in_magento_shipment_ids" readonly="1"><list><field name="external_id"/><field name="source_code"/><field name="exported_at"/></list></field></page></xpath>
+        </field>
+    </record>
+</odoo>

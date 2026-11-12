@@ -1,0 +1,261 @@
+<section style="font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;color:#2B2236;background:#F8F6FA;margin:0;padding:0;line-height:1.6;">
+
+  <!-- ================= HERO ================= -->
+  <div style="background:linear-gradient(135deg,#2A1A33 0%,#3B2340 55%,#5A3456 100%);padding:32px 16px 40px 16px;">
+    <div style="max-width:1120px;margin:0 auto;">
+      <img src="banner.png" alt="Magento Connector for Odoo 19" style="display:block;width:100%;max-width:1120px;height:auto;border-radius:18px;box-shadow:0 18px 40px rgba(0,0,0,0.35);"/>
+      <div style="text-align:center;padding:28px 8px 0 8px;">
+        <h1 style="margin:0 0 10px 0;font-size:34px;font-weight:800;color:#FFFFFF;line-height:1.2;">
+          Magento <span style="color:#F7893F;">Connector</span>
+        </h1>
+        <p style="margin:0 auto;max-width:760px;font-size:18px;color:#E6D8E4;">
+          Odoo-led Magento catalog publishing and queued sales order imports. Odoo maintains your catalog, prices and
+          physical stock; Magento supplies online orders, customer registrations and financial documents.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:22px;">
+          <span style="background:rgba(255,255,255,0.12);color:#FFFFFF;border-radius:999px;padding:6px 16px;font-size:14px;font-weight:600;">Odoo 19</span>
+          <span style="background:rgba(255,255,255,0.12);color:#FFFFFF;border-radius:999px;padding:6px 16px;font-size:14px;font-weight:600;">Magento REST API (V1)</span>
+          <span style="background:rgba(255,255,255,0.12);color:#FFFFFF;border-radius:999px;padding:6px 16px;font-size:14px;font-weight:600;">OAuth 1.0a / Bearer token</span>
+          <span style="background:#F26B1D;color:#FFFFFF;border-radius:999px;padding:6px 16px;font-size:14px;font-weight:600;">Requires queue_job</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SYNC DIRECTIONS ================= -->
+  <div style="max-width:1120px;margin:0 auto;padding:44px 16px 8px 16px;">
+    <h2 style="margin:0 0 8px 0;font-size:28px;font-weight:800;color:#3B2340;text-align:center;">What Synchronizes, and Which Way</h2>
+    <p style="margin:0 auto 26px auto;max-width:720px;text-align:center;color:#5E5670;font-size:16px;">
+      Each system stays the owner of its own data. No custom Magento extension is needed.
+    </p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;">
+      <div style="background:#FFFFFF;border-radius:16px;padding:20px;border-top:5px solid #6B3F66;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <div style="font-size:13px;font-weight:700;color:#6B3F66;letter-spacing:1px;">ODOO &#8594; MAGENTO</div>
+        <div style="font-size:18px;font-weight:700;margin:4px 0 6px 0;">Catalog &amp; stock</div>
+        <div style="font-size:15px;color:#5E5670;">Categories, attributes, products, prices, images and warehouse source quantities.</div>
+      </div>
+      <div style="background:#FFFFFF;border-radius:16px;padding:20px;border-top:5px solid #F26B1D;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <div style="font-size:13px;font-weight:700;color:#F26B1D;letter-spacing:1px;">MAGENTO &#8594; ODOO</div>
+        <div style="font-size:18px;font-weight:700;margin:4px 0 6px 0;">Orders &amp; customers</div>
+        <div style="font-size:15px;color:#5E5670;">New orders from selected store views and new customer registrations.</div>
+      </div>
+      <div style="background:#FFFFFF;border-radius:16px;padding:20px;border-top:5px solid #6B3F66;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <div style="font-size:13px;font-weight:700;color:#6B3F66;letter-spacing:1px;">ODOO &#8594; MAGENTO</div>
+        <div style="font-size:18px;font-weight:700;margin:4px 0 6px 0;">Fulfillment</div>
+        <div style="font-size:15px;color:#5E5670;">Completed deliveries and tracking. Unprocessed whole-order cancellations sync both ways.</div>
+      </div>
+      <div style="background:#FFFFFF;border-radius:16px;padding:20px;border-top:5px solid #F26B1D;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <div style="font-size:13px;font-weight:700;color:#F26B1D;letter-spacing:1px;">MAGENTO &#8594; ODOO</div>
+        <div style="font-size:18px;font-weight:700;margin:4px 0 6px 0;">Accounting</div>
+        <div style="font-size:15px;color:#5E5670;">Invoices and credit memos imported as drafts; reported payment amounts are read.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= KEY FEATURES ================= -->
+  <div style="max-width:1120px;margin:0 auto;padding:44px 16px 8px 16px;">
+    <h2 style="margin:0 0 8px 0;font-size:28px;font-weight:800;color:#3B2340;text-align:center;">Key Features</h2>
+    <p style="margin:0 auto 26px auto;max-width:720px;text-align:center;color:#5E5670;font-size:16px;">
+      Everything runs as background jobs on a dedicated <code style="background:#EDE7F1;color:#6B3F66;padding:1px 6px;border-radius:6px;">magento</code> queue channel.
+    </p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;">
+
+      <div style="background:#FFFFFF;border-radius:18px;padding:24px;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <div style="width:52px;height:52px;border-radius:14px;background:#EDE7F1;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px;">&#129517;</div>
+        <h3 style="margin:0 0 8px 0;font-size:19px;font-weight:700;color:#2B2236;">Guided Setup</h3>
+        <p style="margin:0;font-size:15px;color:#5E5670;">A five-step wizard: Connection, Magento scope, Mappings, Automation and Review. It discovers store views, attribute sets, root categories and inventory sources from your store. New connections stay paused until you enable them.</p>
+      </div>
+
+      <div style="background:#FFFFFF;border-radius:18px;padding:24px;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <div style="width:52px;height:52px;border-radius:14px;background:#FDEBDD;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px;">&#128230;</div>
+        <h3 style="margin:0 0 8px 0;font-size:19px;font-weight:700;color:#2B2236;">Catalog Publishing</h3>
+        <p style="margin:0;font-size:15px;color:#5E5670;">Publish selected product categories (with hierarchy), variant attributes and options, simple and virtual products, and configurable products with their variants. Includes product images and custom catalog field mappings. Existing Magento records can be linked instead of recreated.</p>
+      </div>
+
+      <div style="background:#FFFFFF;border-radius:18px;padding:24px;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <div style="width:52px;height:52px;border-radius:14px;background:#EDE7F1;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px;">&#128178;</div>
+        <h3 style="margin:0 0 8px 0;font-size:19px;font-weight:700;color:#2B2236;">Prices &amp; Change Detection</h3>
+        <p style="margin:0;font-size:15px;color:#5E5670;">Prices come from the connection pricelist. Price-only changes can be sent as batch updates. The connector compares what it would send with the last acknowledged export, so unchanged records do not trigger duplicate writes.</p>
+      </div>
+
+      <div style="background:#FFFFFF;border-radius:18px;padding:24px;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <div style="width:52px;height:52px;border-radius:14px;background:#FDEBDD;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px;">&#127980;</div>
+        <h3 style="margin:0 0 8px 0;font-size:19px;font-weight:700;color:#2B2236;">Inventory (MSI Sources)</h3>
+        <p style="margin:0;font-size:15px;color:#5E5670;">Map each Odoo warehouse to an exact Magento MSI source code and test it. Physical on-hand stock is exported for inventory-enabled products, in batches. Magento reservations are left untouched.</p>
+      </div>
+
+      <div style="background:#FFFFFF;border-radius:18px;padding:24px;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <div style="width:52px;height:52px;border-radius:14px;background:#EDE7F1;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px;">&#128722;</div>
+        <h3 style="margin:0 0 8px 0;font-size:19px;font-weight:700;color:#2B2236;">Queued Order Import</h3>
+        <p style="margin:0;font-size:15px;color:#5E5670;">Polls new orders from the selected store views into an Order Inbox and creates Odoo sales orders. It uses explicit tax-rate mappings and a shipping service product, and checks that Magento and Odoo totals match before saving. Automatic confirmation is optional, and failed orders can be retried.</p>
+      </div>
+
+      <div style="background:#FFFFFF;border-radius:18px;padding:24px;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <div style="width:52px;height:52px;border-radius:14px;background:#FDEBDD;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px;">&#128101;</div>
+        <h3 style="margin:0 0 8px 0;font-size:19px;font-weight:700;color:#2B2236;">Customers &amp; Addresses</h3>
+        <p style="margin:0;font-size:15px;color:#5E5670;">Import new Magento customer registrations, and export customer and address changes made in Odoo. Each has its own switch and shares one interval.</p>
+      </div>
+
+      <div style="background:#FFFFFF;border-radius:18px;padding:24px;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <div style="width:52px;height:52px;border-radius:14px;background:#EDE7F1;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px;">&#128666;</div>
+        <h3 style="margin:0 0 8px 0;font-size:19px;font-weight:700;color:#2B2236;">Shipments, Tracking &amp; Cancellations</h3>
+        <p style="margin:0;font-size:15px;color:#5E5670;">Export completed Odoo deliveries as Magento shipments from the mapped source, with carrier and tracking numbers. Unprocessed whole-order cancellations sync in either direction.</p>
+      </div>
+
+      <div style="background:#FFFFFF;border-radius:18px;padding:24px;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <div style="width:52px;height:52px;border-radius:14px;background:#FDEBDD;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px;">&#129534;</div>
+        <h3 style="margin:0 0 8px 0;font-size:19px;font-weight:700;color:#2B2236;">Invoices, Credit Memos &amp; Returns</h3>
+        <p style="margin:0;font-size:15px;color:#5E5670;">Import Magento invoices and credit memos as draft Odoo documents in a chosen sales journal, and read reported payment status. You can prepare a return delivery from an imported credit memo.</p>
+      </div>
+
+      <div style="background:#FFFFFF;border-radius:18px;padding:24px;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <div style="width:52px;height:52px;border-radius:14px;background:#EDE7F1;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px;">&#128065;</div>
+        <h3 style="margin:0 0 8px 0;font-size:19px;font-weight:700;color:#2B2236;">Publish / Unpublish Control</h3>
+        <p style="margin:0;font-size:15px;color:#5E5670;">Unpublish or republish product listings from Odoo. New listings are created disabled unless "Publish new products as enabled" is set.</p>
+      </div>
+
+      <div style="background:#FFFFFF;border-radius:18px;padding:24px;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <div style="width:52px;height:52px;border-radius:14px;background:#FDEBDD;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px;">&#128202;</div>
+        <h3 style="margin:0 0 8px 0;font-size:19px;font-weight:700;color:#2B2236;">Operations Dashboard</h3>
+        <p style="margin:0;font-size:15px;color:#5E5670;">Shows successful syncs today, failed and waiting jobs, and pending orders. It has a Test Worker probe and read-only diagnostics for credentials, scheduler, store scope and API read access.</p>
+      </div>
+
+      <div style="background:#FFFFFF;border-radius:18px;padding:24px;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <div style="width:52px;height:52px;border-radius:14px;background:#EDE7F1;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px;">&#128221;</div>
+        <h3 style="margin:0 0 8px 0;font-size:19px;font-weight:700;color:#2B2236;">Sync Logs</h3>
+        <p style="margin:0;font-size:15px;color:#5E5670;">Every synchronization is logged with field-level change details. Old logs are cleaned up automatically after a set number of days (90 by default; 0 keeps them indefinitely).</p>
+      </div>
+
+      <div style="background:#FFFFFF;border-radius:18px;padding:24px;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <div style="width:52px;height:52px;border-radius:14px;background:#FDEBDD;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px;">&#128274;</div>
+        <h3 style="margin:0 0 8px 0;font-size:19px;font-weight:700;color:#2B2236;">Safe &amp; Multi-Company</h3>
+        <p style="margin:0;font-size:15px;color:#5E5670;">Viewer and Administrator access groups, with credential fields restricted to administrators. Records follow company rules. Temporary Magento errors (HTTP 429/5xx) are retried by the job queue. Synchronization is blocked on neutralized databases.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= HOW IT WORKS ================= -->
+  <div style="max-width:1120px;margin:0 auto;padding:44px 16px 8px 16px;">
+    <h2 style="margin:0 0 26px 0;font-size:28px;font-weight:800;color:#3B2340;text-align:center;">How It Works</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;">
+      <div style="background:#FFFFFF;border-radius:16px;padding:20px;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <div style="width:36px;height:36px;border-radius:50%;background:#6B3F66;color:#FFFFFF;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">1</div>
+        <div style="font-weight:700;margin-bottom:4px;">Connect</div>
+        <div style="font-size:14px;color:#5E5670;">Create a Magento integration and enter its credentials (OAuth 1.0a or Bearer token) and the HTTPS store URL in Guided Setup.</div>
+      </div>
+      <div style="background:#FFFFFF;border-radius:16px;padding:20px;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <div style="width:36px;height:36px;border-radius:50%;background:#F26B1D;color:#FFFFFF;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">2</div>
+        <div style="font-weight:700;margin-bottom:4px;">Discover &amp; map</div>
+        <div style="font-size:14px;color:#5E5670;">Discover store views, attribute set and root category. Map warehouses to MSI sources and Magento tax rates to Odoo taxes.</div>
+      </div>
+      <div style="background:#FFFFFF;border-radius:16px;padding:20px;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <div style="width:36px;height:36px;border-radius:50%;background:#6B3F66;color:#FFFFFF;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">3</div>
+        <div style="font-weight:700;margin-bottom:4px;">Choose automation</div>
+        <div style="font-size:14px;color:#5E5670;">Turn on the flows you need (orders, catalog, inventory, customers, fulfillment, financials) and set their intervals.</div>
+      </div>
+      <div style="background:#FFFFFF;border-radius:16px;padding:20px;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <div style="width:36px;height:36px;border-radius:50%;background:#F26B1D;color:#FFFFFF;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">4</div>
+        <div style="font-weight:700;margin-bottom:4px;">Verify &amp; enable</div>
+        <div style="font-size:14px;color:#5E5670;">Run Test Worker and Diagnostics, resolve any errors, then enable synchronization.</div>
+      </div>
+      <div style="background:#FFFFFF;border-radius:16px;padding:20px;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <div style="width:36px;height:36px;border-radius:50%;background:#6B3F66;color:#FFFFFF;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">5</div>
+        <div style="font-weight:700;margin-bottom:4px;">Run</div>
+        <div style="font-size:14px;color:#5E5670;">A scheduled action checks due work every minute and queues jobs. Monitor everything from Operations and Sync Logs.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SCREENSHOTS (placeholders) ================= -->
+  <div style="max-width:1120px;margin:0 auto;padding:44px 16px 8px 16px;">
+    <h2 style="margin:0 0 26px 0;font-size:28px;font-weight:800;color:#3B2340;text-align:center;">Screenshots</h2>
+    <h3 style="margin:0 0 14px 0;font-size:20px;font-weight:700;color:#3B2340;"><span style="display:inline-block;background:#714B67;color:#FFFFFF;font-size:13px;font-weight:700;letter-spacing:0.5px;padding:3px 10px;border-radius:999px;margin-right:8px;vertical-align:middle;">ODOO</span>Inside Odoo</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;">
+      <div style="background:#FFFFFF;border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <a href="images/guided_setup.png" target="_blank" style="display:block;aspect-ratio:16/10;background:#EDE7F1;border-bottom:1px solid #E2D8E6;overflow:hidden;"><img src="images/guided_setup.png" alt="Guided Setup screenshot" style="display:block;width:100%;height:100%;object-fit:cover;object-position:top left;"/></a>
+        <div style="padding:14px 18px;"><div style="font-weight:700;">Guided Setup</div><div style="font-size:14px;color:#5E5670;">Five-step wizard with store discovery and diagnostics.</div></div>
+      </div>
+      <div style="background:#FFFFFF;border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <a href="images/operations.png" target="_blank" style="display:block;aspect-ratio:16/10;background:#FDEBDD;border-bottom:1px solid #F6D7C1;overflow:hidden;"><img src="images/operations.png" alt="Operations dashboard screenshot" style="display:block;width:100%;height:100%;object-fit:cover;object-position:top left;"/></a>
+        <div style="padding:14px 18px;"><div style="font-weight:700;">Operations</div><div style="font-size:14px;color:#5E5670;">Job counters, recent activity, worker test and diagnostics.</div></div>
+      </div>
+      <div style="background:#FFFFFF;border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <a href="images/order_inbox.png" target="_blank" style="display:block;aspect-ratio:16/10;background:#EDE7F1;border-bottom:1px solid #E2D8E6;overflow:hidden;"><img src="images/order_inbox.png" alt="Order Inbox screenshot" style="display:block;width:100%;height:100%;object-fit:cover;object-position:top left;"/></a>
+        <div style="padding:14px 18px;"><div style="font-weight:700;">Order Inbox</div><div style="font-size:14px;color:#5E5670;">Imported Magento orders with status and retry.</div></div>
+      </div>
+      <div style="background:#FFFFFF;border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <a href="images/product_publishing.png" target="_blank" style="display:block;aspect-ratio:16/10;background:#FDEBDD;border-bottom:1px solid #F6D7C1;overflow:hidden;"><img src="images/product_publishing.png" alt="Product Publishing screenshot" style="display:block;width:100%;height:100%;object-fit:cover;object-position:top left;"/></a>
+        <div style="padding:14px 18px;"><div style="font-weight:700;">Product Publishing</div><div style="font-size:14px;color:#5E5670;">Publish wizard and product mappings.</div></div>
+      </div>
+    </div>
+
+    <h3 style="margin:36px 0 14px 0;font-size:20px;font-weight:700;color:#3B2340;"><span style="display:inline-block;background:#EB5202;color:#FFFFFF;font-size:13px;font-weight:700;letter-spacing:0.5px;padding:3px 10px;border-radius:999px;margin-right:8px;vertical-align:middle;">MAGENTO</span>Result in Magento Admin</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;">
+      <div style="background:#FFFFFF;border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <a href="images/magento_products.png" target="_blank" style="display:block;aspect-ratio:16/10;background:#FDEBDD;border-bottom:1px solid #F6D7C1;overflow:hidden;"><img src="images/magento_products.png" alt="Magento product grid screenshot" style="display:block;width:100%;height:100%;object-fit:cover;object-position:top left;"/></a>
+        <div style="padding:14px 18px;"><div style="font-weight:700;">Published Catalog</div><div style="font-size:14px;color:#5E5670;">Products, prices and stock published from Odoo.</div></div>
+      </div>
+      <div style="background:#FFFFFF;border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <a href="images/magento_product_edit.png" target="_blank" style="display:block;aspect-ratio:16/10;background:#EDE7F1;border-bottom:1px solid #E2D8E6;overflow:hidden;"><img src="images/magento_product_edit.png" alt="Magento product edit screenshot" style="display:block;width:100%;height:100%;object-fit:cover;object-position:top left;"/></a>
+        <div style="padding:14px 18px;"><div style="font-weight:700;">Product &amp; MSI Sources</div><div style="font-size:14px;color:#5E5670;">SKU, categories and per-source quantities from Odoo.</div></div>
+      </div>
+      <div style="background:#FFFFFF;border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(59,35,64,0.08);">
+        <a href="images/magento_order.png" target="_blank" style="display:block;aspect-ratio:16/10;background:#FDEBDD;border-bottom:1px solid #F6D7C1;overflow:hidden;"><img src="images/magento_order.png" alt="Magento order view screenshot" style="display:block;width:100%;height:100%;object-fit:cover;object-position:top left;"/></a>
+        <div style="padding:14px 18px;"><div style="font-weight:700;">Order Status Back-Sync</div><div style="font-size:14px;color:#5E5670;">Shipment tracking and invoice pushed back from Odoo.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= DEPENDENCIES ================= -->
+  <div style="max-width:1120px;margin:0 auto;padding:44px 16px 8px 16px;">
+    <h2 style="margin:0 0 26px 0;font-size:28px;font-weight:800;color:#3B2340;text-align:center;">Dependencies</h2>
+
+    <div style="display:flex;flex-wrap:wrap;gap:20px;">
+      <div style="flex:1 1 320px;background:#FFFFFF;border-radius:18px;padding:24px;box-shadow:0 4px 16px rgba(59,35,64,0.08);border-left:6px solid #F26B1D;">
+        <div style="font-size:13px;font-weight:700;color:#F26B1D;letter-spacing:1px;margin-bottom:6px;">REQUIRED MODULE</div>
+        <h3 style="margin:0 0 8px 0;font-size:20px;font-weight:700;">Job Queue (queue_job)</h3>
+        <p style="margin:0 0 16px 0;font-size:15px;color:#5E5670;">All synchronization (order polling, catalog, stock, customer, fulfillment and financial jobs) runs through queue_job.</p>
+        <a href="https://apps.odoo.com/apps/modules/19.0/queue_job" target="_blank" rel="noopener" style="display:inline-block;background:#6B3F66;color:#FFFFFF;text-decoration:none;font-weight:700;font-size:15px;padding:10px 20px;border-radius:999px;">Get queue_job on Odoo Apps &#8594;</a>
+      </div>
+
+      <div style="flex:1 1 320px;background:#FFFFFF;border-radius:18px;padding:24px;box-shadow:0 4px 16px rgba(59,35,64,0.08);border-left:6px solid #6B3F66;">
+        <div style="font-size:13px;font-weight:700;color:#6B3F66;letter-spacing:1px;margin-bottom:6px;">ALSO REQUIRED</div>
+        <ul style="margin:0;padding-left:20px;font-size:15px;color:#5E5670;">
+          <li style="margin-bottom:6px;"><strong style="color:#2B2236;">Odoo modules:</strong> Sales (<code>sale_management</code>) and Sales &amp; Stock (<code>sale_stock</code>)</li>
+          <li style="margin-bottom:6px;"><strong style="color:#2B2236;">Python packages:</strong> <code>requests</code>, <code>requests_oauthlib</code></li>
+          <li><strong style="color:#2B2236;">Magento:</strong> an HTTPS store with an integration that grants API access to the resources your enabled flows use</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;background:#FFF6EF;border:1px solid #F6D7C1;border-radius:18px;padding:22px 24px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:14px;">
+        <div style="flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:#F26B1D;color:#FFFFFF;font-weight:800;font-size:22px;display:flex;align-items:center;justify-content:center;">!</div>
+        <div style="flex:1 1 260px;min-width:0;">
+          <div style="font-weight:700;font-size:17px;margin-bottom:6px;color:#2B2236;">Install and configure queue_job first</div>
+          <p style="margin:0 0 12px 0;font-size:15px;color:#5E5670;">
+            queue_job must be installed and its job runner configured on the server <strong>before</strong> you install
+            Magento Connector. Load it as a server-wide module in your <code>odoo.conf</code>, then restart Odoo:
+          </p>
+          <pre style="margin:0;background:#2A1A33;color:#F7C9A8;border-radius:12px;padding:14px 16px;font-size:14px;line-height:1.5;overflow-x:auto;white-space:pre;">[options]
+server_wide_modules = base,web,queue_job</pre>
+          <p style="margin:12px 0 0 0;font-size:14px;color:#5E5670;">
+            Keep any other server-wide modules your deployment already uses, and make sure the
+            <em>Magento: Schedule Synchronization</em> scheduled action stays active.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FOOTER ================= -->
+  <div style="max-width:1120px;margin:0 auto;padding:44px 16px 48px 16px;">
+    <div style="background:linear-gradient(135deg,#3B2340 0%,#6B3F66 100%);border-radius:20px;padding:28px 24px;text-align:center;color:#FFFFFF;">
+      <div style="font-size:22px;font-weight:800;margin-bottom:6px;">Magento Connector by Infintor</div>
+      <div style="font-size:15px;color:#E6D8E4;">Odoo 19 &middot; Version 19.0.1.0.0 &middot; License OPL-1</div>
+    </div>
+  </div>
+
+</section>

@@ -1,0 +1,93 @@
+<odoo>
+    <record id="view_instance_customers_catalog" model="ir.ui.view">
+        <field name="name">in.magento.instance.customers.catalog</field>
+        <field name="model">in.magento.instance</field>
+        <field name="inherit_id" ref="view_instance_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_related_customers" type="object" class="oe_stat_button" icon="fa-users">
+                    <field name="customer_count" widget="statinfo" string="Customers"/>
+                </button>
+            </xpath>
+            <field name="auto_export_products" position="after">
+                <field name="auto_export_categories"/>
+                <field name="auto_export_attributes"/>
+                <field name="catalog_metadata_interval"/>
+            </field>
+            <xpath expr="//notebook[@name='connection_tabs']" position="inside">
+                <page string="Customers" name="customers">
+                    <p>Import new registrations from the selected website. Odoo owns subsequent customer changes. Existing accounts require explicit linking; email alone never merges contacts.</p>
+                    <group>
+                        <group>
+                            <field name="customer_website_id"/>
+                            <field name="customer_store_id"/>
+                            <field name="customer_import_from"/>
+                            <field name="customer_cursor"/>
+                        </group>
+                        <group>
+                            <field name="auto_import_customers"/>
+                            <field name="auto_export_customers"/>
+                            <field name="customer_interval"/>
+                            <field name="last_customer_schedule"/>
+                        </group>
+                    </group>
+                    <button name="action_import_customers" type="object" string="Import Registrations" groups="in_odoo_magento_connector.group_magento_manager"/>
+                    <button name="action_export_customers" type="object" string="Export Enabled Customers" groups="in_odoo_magento_connector.group_magento_manager" confirm="Export enabled customer mappings? New accounts may trigger Magento's account email."/>
+                    <field name="customer_ids" context="{'default_instance_id': id}">
+                        <list>
+                            <field name="partner_id"/>
+                            <field name="external_id"/>
+                            <field name="sync_customer"/>
+                            <field name="verified_at"/>
+                            <field name="last_sync"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+            <xpath expr="//notebook[@name='catalog_tabs']" position="inside">
+                <page string="Field Mappings" name="catalog_fields">
+                    <p>Map Barcode or another scalar Product Variant field to an existing Magento text, textarea or boolean attribute. Assign it to the configured attribute set and Verify before exporting. Values are sent on simple products and variant SKUs. Empty values clear the mapped Magento field.</p>
+                    <field name="catalog_field_ids" context="{'default_instance_id': id}">
+                        <list editable="bottom">
+                            <field name="field_id"/>
+                            <field name="attribute_code"/>
+                            <field name="frontend_input"/>
+                            <field name="verified_at"/>
+                            <button name="action_verify" type="object" string="Verify" groups="in_odoo_magento_connector.group_magento_manager"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_partner_list" model="ir.ui.view">
+        <field name="arch" type="xml"><list><field name="instance_id"/><field name="partner_id"/>
+            <field name="external_id"/><field name="sync_customer"/><field name="verified_at"/><field name="last_sync"/>
+        </list></field>
+    </record>
+    <record id="view_customer_form" model="ir.ui.view">
+        <field name="name">in.magento.partner.binding.form</field><field name="model">in.magento.partner.binding</field>
+        <field name="arch" type="xml"><form><header>
+            <button name="action_link" string="Verify / Link Existing" type="object" invisible="not external_id" groups="in_odoo_magento_connector.group_magento_manager"/>
+            <button name="action_export" string="Export to Magento" type="object" class="oe_highlight" groups="in_odoo_magento_connector.group_magento_manager"
+                confirm="Export this customer's profile and mapped addresses? A new account may trigger Magento's account email."/>
+        </header><sheet>
+            <group><group><field name="company_id" invisible="1"/><field name="instance_id" readonly="verified_at"/>
+                <field name="partner_id" readonly="verified_at" domain="[('parent_id', '=', False)]"/>
+                <field name="external_id" readonly="verified_at"/><field name="sync_customer"/></group>
+                <group><field name="verified_at"/><field name="last_sync"/></group></group>
+            <p>For an existing account, enter its Magento customer ID and Verify. For a new account, leave the ID empty. Odoo contact names must include first and last names. Only explicitly mapped master addresses are exported; order address snapshots cannot be selected.</p>
+            <field name="address_ids"><list editable="bottom"><field name="partner_id"/>
+                <field name="external_id"/><field name="sync_address"/><field name="last_sync"/>
+            </list></field>
+        </sheet></form></field>
+    </record>
+    <record id="view_sync_log_customer" model="ir.ui.view">
+        <field name="name">in.magento.sync.log.customer</field><field name="model">in.magento.sync.log</field>
+        <field name="inherit_id" ref="view_sync_log_form"/>
+        <field name="arch" type="xml"><field name="order_binding_id" position="after">
+            <field name="customer_binding_id" invisible="not customer_binding_id"/>
+            <field name="customer_address_id" invisible="not customer_address_id"/>
+        </field></field>
+    </record>
+</odoo>

@@ -1,0 +1,168 @@
+<odoo>
+    <record id="view_publish_products_form" model="ir.ui.view">
+        <field name="name">in.magento.publish.products.form</field>
+        <field name="model">in.magento.publish.products</field>
+        <field name="arch" type="xml">
+            <form string="Publish to Magento">
+                <group>
+                    <group string="Destination">
+                        <field name="instance_id" options="{'no_create': True}"/>
+                        <field name="pricelist_id" readonly="1" options="{'no_open': True}"/>
+                    </group>
+                    <group string="Selection summary">
+                        <field name="product_count" string="Products / variants"/>
+                        <field name="new_count" string="New mappings"/>
+                        <field name="existing_count" string="Existing mappings"/>
+                    </group>
+                </group>
+                <field name="required_attribute_ids" invisible="1"/>
+                <field name="attribute_setup_needed" invisible="1"/>
+                <field name="setup_mapping_id" invisible="1"/>
+                <div class="alert alert-warning" role="status" invisible="not attribute_setup_needed">
+                    Some variant attributes or values are not mapped to this connection.
+                    Open the <strong>Attributes</strong> tab to see what is missing and set it up before publishing.
+                </div>
+                <notebook>
+                    <page string="Products and variants" name="publication_products">
+                        <!-- Full-width content belongs outside a group: otherwise
+                             Odoo places it in a narrow label/field grid cell. -->
+                        <div class="alert alert-info mt-3" role="status" invisible="not parent_line_ids">
+                            All active variants of each selected product are included.
+                            Review the Configurable parents and Attributes tabs before publishing.
+                        </div>
+                        <separator string="Products / variants to publish"/>
+                        <p class="text-muted">
+                            New mappings use the product's Internal Reference as the SKU. Set a unique reference on each new variant before publishing.
+                            Existing mappings keep their saved SKU and settings and will be exported again.
+                        </p>
+                        <field name="product_ids" nolabel="1">
+                            <list create="0" edit="0" delete="0">
+                                <field name="name" string="Product"/>
+                                <field name="product_template_attribute_value_ids" string="Variant values" widget="many2many_tags" options="{'no_open': True}"/>
+                                <field name="default_code" string="Internal Reference / new SKU"/>
+                            </list>
+                        </field>
+                    </page>
+                    <page string="Configurable parents" name="publication_parents" invisible="not parent_line_ids">
+                        <div class="mt-3">
+                            <separator string="Configurable parents"/>
+                            <p class="text-muted">
+                                The parent groups the variant choices in Magento. Its SKU must differ from every variant SKU.
+                                An existing parent keeps its original SKU.
+                            </p>
+                            <field name="parent_line_ids" nolabel="1">
+                                <list editable="bottom" create="0" delete="0">
+                                    <!-- Required read-only defaults must survive the
+                                         client's CREATE command for each new row. -->
+                                    <field name="template_id" string="Odoo product" force_save="1" options="{'no_open': True}"/>
+                                    <field name="parent_sku" string="Magento parent SKU"/>
+                                </list>
+                            </field>
+                        </div>
+                    </page>
+                    <page string="Attributes" name="publication_attributes" invisible="not required_attribute_ids">
+                        <separator string="Attribute readiness"/>
+                        <field name="attribute_status" nolabel="1" readonly="1"/>
+                        <button name="action_refresh_attributes" type="object" string="Refresh attribute status" icon="fa-refresh" class="btn-secondary mb-3"/>
+                        <separator string="Set up an attribute"/>
+                        <group>
+                            <group>
+                                <field name="setup_attribute_id" domain="[('id', 'in', required_attribute_ids)]" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="setup_attribute_code" readonly="setup_mapping_id"/>
+                            </group>
+                            <group>
+                                <field name="setup_attribute_set_id" readonly="1"/>
+                            </group>
+                        </group>
+                        <p class="text-muted">
+                            For a new Magento attribute, choose a unique code and publish it here.
+                            Publication includes all active values of the Odoo attribute and assigns it to the connection's attribute set.
+                            For an existing mapping, publication adds new values using its saved code.
+                        </p>
+                        <button name="action_publish_attribute" type="object" string="Publish / update attribute" class="btn-primary me-2" invisible="not setup_attribute_id"/>
+                        <button name="action_open_attribute_mapping" type="object" string="Edit / verify mapping" class="btn-secondary" invisible="not setup_attribute_id"/>
+                        <div class="alert alert-info mt-3" role="status">
+                            If the attribute already exists in Magento, enter its code, then use <strong>Edit / verify mapping</strong>
+                            to link its value IDs and click <strong>Verify in Magento</strong>.
+                            Existing Magento attributes and options are not linked automatically by name.
+                        </div>
+                        <p class="text-muted">
+                            Attribute publication runs in the background and does not publish these products.
+                            Wait for completion in Background Jobs or Sync Logs, then refresh the attribute status here.
+                            Repeat for each attribute before publishing the products.
+                        </p>
+                    </page>
+                    <page string="New listing options" name="publication_options" invisible="not new_count">
+                        <div class="alert alert-info mt-3" role="status">
+                            These options apply only to new mappings in this selection. Existing mappings keep their current settings.
+                        </div>
+                        <group>
+                            <group string="Catalog assignment">
+                                <field name="category_ids" string="Magento categories" widget="many2many_tags" options="{'no_create': True}"/>
+                                <field name="tax_class_id" string="Magento tax class ID"/>
+                            </group>
+                            <group string="Optional synchronization">
+                                <field name="sync_image" string="Export product image"/>
+                                <field name="sync_inventory" string="Synchronize inventory"/>
+                            </group>
+                        </group>
+                        <p class="text-muted">
+                            Choose categories already published to this connection. Leaving categories empty creates listings without category assignment.
+                            Tax class 0 means no Magento tax class.
+                        </p>
+                        <p class="text-muted">
+                            Inventory synchronization requires a tracked physical product and an active warehouse/source mapping on the connection.
+                        </p>
+                    </page>
+                    <page string="Connection behavior" name="publication_behavior">
+                        <p class="text-muted mt-3">
+                            These read-only settings come from the selected connection. Change them on the connection if needed.
+                        </p>
+                        <group col="2">
+                            <field name="publish_enabled" string="Enable new listings in Magento" readonly="1"/>
+                            <field name="auto_export_products" string="Automatically export later product changes" readonly="1"/>
+                        </group>
+                        <p class="text-muted">
+                            When new listings are not enabled, they are created disabled in Magento.
+                            Automatic product updates apply to already synchronized mappings; new Odoo products still need explicit publication.
+                        </p>
+                        <div class="alert alert-warning" role="status">
+                            If a SKU already exists in Magento, explicitly link the matching product before exporting.
+                            Publication does not automatically adopt an existing listing.
+                        </div>
+                        <p class="text-muted">Publication runs in the background. Check Sync Logs or Background Jobs for the result.</p>
+                    </page>
+                </notebook>
+                <footer><button name="action_publish" type="object" string="Publish to Magento" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/></footer>
+            </form>
+        </field>
+    </record>
+    <!-- Shared product form: both product templates and individual variants. -->
+    <record id="view_product_publish_magento" model="ir.ui.view">
+        <field name="name">product.form.publish.magento</field><field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_publish_to_magento" type="object" class="oe_stat_button" icon="fa-cloud-upload"
+                        groups="in_odoo_magento_connector.group_magento_manager">
+                    <div class="o_stat_info"><span class="o_stat_text">Publish to</span><span class="o_stat_text">Magento</span></div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+    <record id="action_publish_templates_magento" model="ir.actions.server">
+        <field name="name">Publish to Magento</field><field name="model_id" ref="product.model_product_template"/>
+        <field name="binding_model_id" ref="product.model_product_template"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="group_ids" eval="[Command.link(ref('group_magento_manager'))]"/>
+        <field name="state">code</field><field name="code">action = records.action_publish_to_magento()</field>
+    </record>
+    <record id="action_publish_variants_magento" model="ir.actions.server">
+        <field name="name">Publish to Magento</field><field name="model_id" ref="product.model_product_product"/>
+        <field name="binding_model_id" ref="product.model_product_product"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="group_ids" eval="[Command.link(ref('group_magento_manager'))]"/>
+        <field name="state">code</field><field name="code">action = records.action_publish_to_magento()</field>
+    </record>
+</odoo>

@@ -1,0 +1,12 @@
+<odoo noupdate="1">
+    <record id="cron_schedule_magento" model="ir.cron">
+        <field name="name">Magento: Schedule Synchronization</field>
+        <field name="model_id" ref="model_in_magento_instance"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_schedule()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">minutes</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="True"/>
+    </record>
+</odoo>

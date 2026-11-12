@@ -1,0 +1,56 @@
+<odoo>
+    <record id="view_publish_categories_form" model="ir.ui.view">
+        <field name="name">in.magento.publish.categories.form</field><field name="model">in.magento.publish.categories</field>
+        <field name="arch" type="xml">
+            <form string="Publish Categories to Magento">
+                <group><group><field name="instance_id" options="{'no_create': True}"/>
+                    <field name="parent_binding_id" options="{'no_create': True}"/>
+                    <field name="root_category_id" string="Connection root category ID"/>
+                    <field name="include_parents"/></group>
+                    <group><field name="publish_count"/><field name="extra_count"/></group>
+                </group>
+                <div class="alert alert-info" role="status">
+                    Review the categories and their Magento parents below. Existing mappings keep their hierarchy.
+                    Published categories are enabled and included in Magento navigation. Products are published separately.
+                </div>
+                <field name="category_ids" invisible="1"/>
+                <field name="preview_html" nolabel="1"/>
+                <footer><button name="action_publish" type="object" string="Publish to Magento" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/></footer>
+            </form>
+        </field>
+    </record>
+    <record id="view_product_category_publish_magento" model="ir.ui.view">
+        <field name="name">product.category.form.publish.magento</field><field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_form_view"/>
+        <field name="arch" type="xml"><xpath expr="//div[@name='button_box']" position="inside">
+            <button name="action_publish_to_magento" type="object" class="oe_stat_button" icon="fa-cloud-upload"
+                    groups="in_odoo_magento_connector.group_magento_manager">
+                <div class="o_stat_info"><span class="o_stat_text">Publish to</span><span class="o_stat_text">Magento</span></div>
+            </button>
+        </xpath></field>
+    </record>
+    <record id="action_publish_categories_magento" model="ir.actions.server">
+        <field name="name">Publish to Magento</field><field name="model_id" ref="product.model_product_category"/>
+        <field name="binding_model_id" ref="product.model_product_category"/><field name="binding_view_types">list,form</field>
+        <field name="group_ids" eval="[Command.link(ref('group_magento_manager'))]"/>
+        <field name="state">code</field><field name="code">action = records.action_publish_to_magento()</field>
+    </record>
+    <record id="view_category_mapping_list" model="ir.ui.view">
+        <field name="name">in.magento.category.binding.list</field><field name="model">in.magento.category.binding</field>
+        <field name="arch" type="xml"><list><field name="instance_id"/><field name="category_id"/>
+            <field name="parent_id"/><field name="external_id"/><field name="last_sync"/></list></field>
+    </record>
+    <record id="view_category_mapping_form" model="ir.ui.view">
+        <field name="name">in.magento.category.binding.form</field><field name="model">in.magento.category.binding</field>
+        <field name="arch" type="xml"><form><header>
+            <button name="action_export" type="object" string="Export to Magento" class="btn-primary"
+                    groups="in_odoo_magento_connector.group_magento_manager"/>
+        </header><sheet><group><field name="instance_id" readonly="external_id"/><field name="category_id" readonly="external_id"/><field name="parent_id" readonly="external_id"/>
+            <field name="external_id"/><field name="last_sync"/></group></sheet></form></field>
+    </record>
+    <record id="action_categories" model="ir.actions.act_window">
+        <field name="name">Magento Category Mappings</field><field name="res_model">in.magento.category.binding</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>
