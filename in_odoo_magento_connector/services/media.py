@@ -47,6 +47,9 @@ def export_image(record, image, name):
             "types": ["image", "small_image", "thumbnail"],
             "content": {"base64_encoded_data": image, "type": mime, "name": f"{marker}.{ext}"},
         }})
+        # Magento's REST layer serializes the new media entry ID as a JSON string ("7").
+        if isinstance(result, str) and result.isdigit():
+            result = int(result)
         if type(result) is not int or result < 1:
             raise UserError(_("Magento did not acknowledge the image. Retry to verify its media entry."))
 

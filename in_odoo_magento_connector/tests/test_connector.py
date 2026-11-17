@@ -2492,6 +2492,22 @@ class TestMagentoConnector(TransactionCase):
             binding._job_export()
             trap.assert_jobs_count(1, only=binding._job_export_image)
 
+    def test_image_acknowledgement_accepts_magento_string_media_id(self):
+        binding = self.product_binding
+        binding.write({'external_id': '101', 'sync_image': True})
+        self.product.image_1920 = self._image_fixture()
+        client = Mock()
+        client.request.side_effect = [[], '7']
+        with self._mock_api(client):
+            binding._job_export_image()
+        self.assertEqual(binding.last_image_fingerprint, image_fingerprint(binding, self.product.image_1920))
+        for bad in ('', 'abc', '0', True):
+            binding.last_image_fingerprint = False
+            client.reset_mock(side_effect=True)
+            client.request.side_effect = [[], bad]
+            with self._mock_api(client), self.assertRaisesRegex(UserError, 'acknowledge'):
+                binding._job_export_image()
+
     def test_image_failed_ack_and_retry_readback_do_not_duplicate_upload(self):
         import hashlib
         import base64
